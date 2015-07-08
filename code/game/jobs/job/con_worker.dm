@@ -3,13 +3,20 @@
 	flag = ENGINEER
 	department_flag = ENGSEC
 	faction = "Station"
+
 	total_positions = -1
 	spawn_positions = -1
+
 	supervisors = "Nanotrasen"
 	selection_color = "#fff5cc"
+
 	idtype = /obj/item/weapon/card/id/engineering
+
 	access = list(access_eva, access_engine, access_engine_equip, access_tech_storage, access_maint_tunnels, access_external_airlocks, access_construction, access_atmospherics, access_cargo, access_cargo_bot, access_mint, access_mining, access_mining_station)
 	minimal_access = list(access_eva, access_engine, access_engine_equip, access_tech_storage, access_maint_tunnels, access_external_airlocks, access_construction, access_atmospherics, access_cargo, access_cargo_bot, access_mint, access_mining, access_mining_station)
+
+	pdaslot=slot_l_store
+	pdatype=/obj/item/device/pda/heads/ce
 
 /datum/job/con_worker/equip(var/mob/living/carbon/human/H)
 	if(!H)	return 0

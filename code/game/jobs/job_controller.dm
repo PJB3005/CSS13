@@ -369,9 +369,8 @@ var/global/datum/controller/occupations/job_master
 			if(!S)
 				S = locate("start*[rank]") // use old stype
 			if(istype(S, /obj/effect/landmark/start) && istype(S.loc, /turf))*/
-			for(var/obj/effect/landmark/start/sloc in landmarks_list)
-				if(sloc.name == "JoinLate")
-					H.forceMove(sloc.loc)
+			var/atom/loc = pick(latejoin)
+			H.forceMove(loc)
 
 		//give them an account in the station database
 		if(centcomm_account_db)

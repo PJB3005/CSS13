@@ -271,10 +271,25 @@ var/list/mechtoys = list(
 			if(MA.anchored)	continue
 
 			if(istype(MA, /obj/item/stack/sheet/mineral/plasma))
+		///		world << "found plasma sheets"
 				var/obj/item/stack/sheet/mineral/plasma/P = MA
 				if(P.redeemed) continue
-				var/datum/material/mat = materials_list.getMaterial(P.sheettype)
+				var/datum/material/mat = materials_list.getMaterial("$" + P.sheettype)
+		//		world << "found mat: [mat]"
+				if(!mat)
+					continue
+	///			world << "adding [(mat.value * 2) * P.amount]$ to cargo account"
 				cargo_acct.money += (mat.value * 2) * P.amount // Central Command pays double for plasma they receive that hasn't been redeemed already.
+
+			else if(istype(MA, /obj/item/weapon/ore/plasma))
+///				world << "found plasma ore"
+				var/obj/item/weapon/ore/plasma/P = MA
+				var/datum/material/mat = materials_list.getMaterial(P.material)
+//				world << "found mat: [mat]"
+				if(!mat)
+					continue
+//				world << "adding [(mat.value * 2)]$ to cargo account"
+				cargo_acct.money += (mat.value / 2)
 
 			// Must be in a crate!
 			else if(istype(MA,/obj/structure/closet/crate))
@@ -283,17 +298,30 @@ var/list/mechtoys = list(
 
 				for(var/atom/A in MA)
 					if(istype(A, /obj/item/stack/sheet/mineral/plasma))
+//						world << "found plasma sheets in a crate"
 						var/obj/item/stack/sheet/mineral/plasma/P = A
 						if(P.redeemed) continue
-						var/datum/material/mat = materials_list.getMaterial(P.sheettype)
+						var/datum/material/mat = materials_list.getMaterial("$" + P.sheettype)	//Stupid hack
+//						world << "found mat: [mat]"
+						if(!mat)
+							continue
+//						world << "adding [(mat.value * 2) * P.amount]$ to cargo account"
 						cargo_acct.money += (mat.value * 2) * P.amount // Central Command pays double for plasma they receive that hasn't been redeemed already.
-						continue
+
+					if(istype(A, /obj/item/weapon/ore/plasma))
+//						world << "found plasma ore in a crate"
+						var/obj/item/weapon/ore/plasma/P = A
+						var/datum/material/mat = materials_list.getMaterial(P.material)
+						if(!mat)
+							continue
+//						world << "adding [(mat.value * 2)]$ to cargo account"
+						cargo_acct.money += (mat.value / 2)
+
 					if(find_slip && istype(A,/obj/item/weapon/paper/manifest))
 						var/obj/item/weapon/paper/slip = A
 						if(slip.stamped && slip.stamped.len) //yes, the clown stamp will work. clown is the highest authority on the station, it makes sense
 							cargo_acct.money += credits_per_slip
 							find_slip = 0
-						continue
 
 					SellObjToOrders(A,0)
 
@@ -426,7 +454,7 @@ var/list/mechtoys = list(
 /obj/machinery/computer/ordercomp/attack_hand(var/mob/user as mob)
 	if(..())
 		return
-	current_acct = user.get_worn_id_account()
+	current_acct = department_accounts["Cargo"]
 	user.set_machine(src)
 	var/dat
 	if(temp)
@@ -578,7 +606,7 @@ var/list/mechtoys = list(
 	if(..())
 		return
 
-	current_acct = user.get_worn_id_account()
+	current_acct = department_accounts["Cargo"]
 
 	user.set_machine(src)
 	post_signal("supply")

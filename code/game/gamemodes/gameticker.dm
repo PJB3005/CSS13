@@ -171,6 +171,7 @@ var/global/datum/controller/gameticker/ticker
 			//Deleting Startpoints but we need the ai point to AI-ize people later
 			if (S.name != "AI")
 				qdel(S)
+/*
 		var/list/obj/effect/landmark/spacepod/random/L = list()
 		for(var/obj/effect/landmark/spacepod/random/SS in landmarks_list)
 			if(istype(SS))
@@ -180,6 +181,7 @@ var/global/datum/controller/gameticker/ticker
 		for(var/obj in L)
 			if(istype(obj, /obj/effect/landmark/spacepod/random))
 				qdel(obj)
+*/
 		world << "<FONT color='blue'><B>Enjoy the game!</B></FONT>"
 		//world << sound('sound/AI/welcome.ogg') // Skie //Out with the old, in with the new. - N3X15
 		var/welcome_sentence=list('sound/AI/vox_login.ogg')
