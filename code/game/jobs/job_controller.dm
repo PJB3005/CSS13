@@ -93,6 +93,7 @@ var/global/datum/controller/occupations/job_master
 
 	proc/GiveRandomJob(var/mob/new_player/player)
 		Debug("GRJ Giving random job, Player: [player]")
+/*
 		for(var/datum/job/job in shuffle(occupations))
 			if(!job)
 				continue
@@ -116,6 +117,8 @@ var/global/datum/controller/occupations/job_master
 				AssignRole(player, job.title)
 				unassigned -= player
 				break
+*/
+		AssignRole(player, "Construction Worker")
 
 	proc/ResetOccupations()
 		for(var/mob/new_player/player in player_list)
@@ -128,7 +131,9 @@ var/global/datum/controller/occupations/job_master
 
 
 	///This proc is called before the level loop of DivideOccupations() and will try to select a head, ignoring ALL non-head preferences for every level until it locates a head or runs out of levels to check
+
 	proc/FillHeadPosition()
+/*
 		for(var/level = 1 to 3)
 			for(var/command_position in command_positions)
 				var/datum/job/job = GetJob(command_position)
@@ -138,6 +143,7 @@ var/global/datum/controller/occupations/job_master
 				var/mob/new_player/candidate = pick(candidates)
 				if(AssignRole(candidate, command_position))
 					return 1
+*/
 		return 0
 
 
@@ -154,6 +160,7 @@ var/global/datum/controller/occupations/job_master
 
 
 	proc/FillAIPosition()
+/*
 		var/ai_selected = 0
 		var/datum/job/job = GetJob("AI")
 		if(!job)	return 0
@@ -180,7 +187,8 @@ var/global/datum/controller/occupations/job_master
 						ai_selected++
 						break
 			if(ai_selected)	return 1
-			return 0
+*/
+		return 0
 
 
 /** Proc DivideOccupations
@@ -192,11 +200,13 @@ var/global/datum/controller/occupations/job_master
 		Debug("Running DO")
 		SetupOccupations()
 
+/*
 		//Holder for Triumvirate is stored in the ticker, this just processes it
 		if(ticker)
 			for(var/datum/job/ai/A in occupations)
 				if(ticker.triai)
 					A.spawn_positions = 3
+*/
 
 		//Get the players who are ready
 		for(var/mob/new_player/player in player_list)
@@ -206,6 +216,10 @@ var/global/datum/controller/occupations/job_master
 		Debug("DO, Len: [unassigned.len]")
 		if(unassigned.len == 0)	return 0
 
+		for(var/mob/new_player/player in unassigned)
+			AssignRole(player, "Construction Worker")
+
+/*
 		//Shuffle players and jobs
 		unassigned = shuffle(unassigned)
 
@@ -213,12 +227,12 @@ var/global/datum/controller/occupations/job_master
 
 		//Select one head
 		Debug("DO, Running Head Check")
-		FillHeadPosition()
+//		FillHeadPosition()
 		Debug("DO, Head Check end")
 
 		//Check for an AI
 		Debug("DO, Running AI Check")
-		FillAIPosition()
+//		FillAIPosition()
 		Debug("DO, AI Check end")
 
 		//Other jobs are now checked
@@ -233,7 +247,7 @@ var/global/datum/controller/occupations/job_master
 		var/list/shuffledoccupations = shuffle(occupations)
 		for(var/level = 1 to 3)
 			//Check the head jobs first each level
-			CheckHeadPositions(level)
+//			CheckHeadPositions(level)
 
 			// Loop through all unassigned players
 			for(var/mob/new_player/player in unassigned)
@@ -330,6 +344,7 @@ var/global/datum/controller/occupations/job_master
 			if(player.client.prefs.alternate_option == RETURN_TO_LOBBY)
 				player.ready = 0
 				unassigned -= player
+*/
 		return 1
 
 
@@ -344,6 +359,7 @@ var/global/datum/controller/occupations/job_master
 		H.job = rank
 
 		if(!joined_late)
+			/*
 			var/obj/S = null
 			for(var/obj/effect/landmark/start/sloc in landmarks_list)
 				if(sloc.name != rank)	continue
@@ -352,8 +368,10 @@ var/global/datum/controller/occupations/job_master
 				break
 			if(!S)
 				S = locate("start*[rank]") // use old stype
-			if(istype(S, /obj/effect/landmark/start) && istype(S.loc, /turf))
-				H.loc = S.loc
+			if(istype(S, /obj/effect/landmark/start) && istype(S.loc, /turf))*/
+			for(var/obj/effect/landmark/start/sloc in landmarks_list)
+				if(sloc.name == "JoinLate")
+					H.forceMove(sloc.loc)
 
 		//give them an account in the station database
 		if(centcomm_account_db)
@@ -450,7 +468,6 @@ var/global/datum/controller/occupations/job_master
 				W.buckle_mob(H,H)
 		return 1
 
-
 	proc/spawnId(var/mob/living/carbon/human/H, rank, title)
 		if(!H)	return 0
 		var/obj/item/weapon/card/id/C = null
@@ -490,8 +507,6 @@ var/global/datum/controller/occupations/job_master
 		H.update_inv_belt()
 		H.update_inv_wear_id()
 		return 1
-
-
 
 	proc/LoadJobs(jobsfile) //ran during round setup, reads info from jobs.txt -- Urist
 		if(!config.load_jobs_from_txt)
