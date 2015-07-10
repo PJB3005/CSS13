@@ -21,6 +21,11 @@ dmm_suite{
 			"U","V","W","X","Y",
 			"Z"
 			)
+		list/blacklist = list(
+			/atom/movable/lighting_overlay,
+			/obj/effect/beam,
+			/obj/item/projectile
+			)
 		}
 	save_map(var/turf/t1 as turf, var/turf/t2 as turf, var/map_name as text, var/flags as num){
 		//Check for illegal characters in file name... in a cheap way.
@@ -106,6 +111,12 @@ dmm_suite{
 				turf_template = "[model.type][check_attributes(model)],"
 				} else{ turf_template = "[world.turf],"}
 			var/area_template = ""
+			var/list/filtered_contents = model.contents.Copy()
+
+			for(var/atom/movable/AM in filtered_contents)	//Filter out blacklisted atoms such as lighting overlays.
+				if(is_type_in_list(AM, blacklist))
+					filtered_contents -= AM
+
 			if(!(flags & DMM_IGNORE_OBJS)){
 				for(var/obj/O in model.contents){
 					obj_template += "[O.type][check_attributes(O)],"
@@ -142,6 +153,10 @@ dmm_suite{
 					attributes_text += {"[V] = [A.vars[V]]"}
 					}
 				else if(isicon(A.vars[V])||isfile(A.vars[V])){
+					if(!fexists(A.vars[V]))	//The file doesn't actually exist and would cause DM to be unable to read the map.
+					{
+						continue
+					}
 					attributes_text += {"[V] = '[A.vars[V]]'"}
 					}
 				else{
