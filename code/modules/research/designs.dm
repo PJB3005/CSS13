@@ -3398,12 +3398,23 @@ proc/getScanDesign(var/obj/O)
 	build_type = IMPRINTER
 	materials = list(MAT_GLASS = 2000, "sacid" = 20)
 	build_path = /obj/item/weapon/circuitboard/sorting_machine/recycling
+	category = "Machine Boards"
 
 /datum/design/sorting_machine/destination
 	name = "Circuit Design (Destinations Sorting Machine)"
 	desc = "Allows for the construction of circuit boards used to build a destinations sorting machine"
 	id = "destsortingmachine"
 	build_path = /obj/item/weapon/circuitboard/sorting_machine/destination
+
+/datum/design/sorting_machine/unloader
+	name = "Circuit Design (Unloading Machine)"
+	desc = "Allows for the construction of circuit boards used to build an unloading machine"
+	id = "unloader"
+	build_path = /obj/item/weapon/circuitboard/unloader
+	req_tech = list("materials" = 3, "engineering" = 3, "programming" = 3)
+	build_type = IMPRINTER
+	materials = list(MAT_GLASS = 2000, "sacid" = 20)
+	category = "Machine Boards"
 
 /*
  *

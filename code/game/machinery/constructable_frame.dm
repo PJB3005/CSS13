@@ -1082,6 +1082,16 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/matter_bin" = 3,
 							"/obj/item/weapon/stock_parts/capacitor" = 1)
 
+/obj/item/weapon/circuitboard/unloader
+	name = "circuit board (unloading machine)"
+	build_path = "/obj/machinery/mineral/unloading_machine"
+	origin_tech = "materials=3;engineering=2;programming=2"
+	frame_desc = "Requires 3 Matter Bins and 1 Capacitor" //You can smell the copy paste from here.
+	req_components = list(
+							"/obj/item/weapon/stock_parts/matter_bin" = 3,
+							"/obj/item/weapon/stock_parts/capacitor" = 1)
+	board_type = "machine"
+
 /*
  *
  *
