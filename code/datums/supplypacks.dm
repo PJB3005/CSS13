@@ -31,6 +31,17 @@ var/list/all_supply_groups = list("Supplies","Clothing","Security","Hospitality"
 
 //////SUPPLIES//////
 
+/datum/supply_packs/hardsuit
+	name = "Hardsuit"
+	contains = list(/obj/item/clothing/suit/space/rig,
+					/obj/item/clothing/head/helmet/space/rig,
+					/obj/item/clothing/mask/breath,
+					/obj/item/clothing/shoes/magboots)
+	cost = 25
+	containertype = /obj/structure/closet/crate/engi
+	containername = "Hardsuit Crate"
+	group = "Engineering"
+
 /datum/supply_packs/toner
 	name = "Toner Cartridges"
 	contains = list(/obj/item/device/toner,
@@ -1074,9 +1085,10 @@ var/list/all_supply_groups = list("Supplies","Clothing","Security","Hospitality"
 					/obj/item/weapon/stock_parts/manipulator,
 					/obj/item/weapon/reagent_containers/glass/beaker,
 					/obj/item/weapon/reagent_containers/glass/beaker,
+					/obj/item/weapon/reagent_containers/glass/beaker/sulphuric,
 					/obj/item/weapon/stock_parts/scanning_module,
 					/obj/item/weapon/stock_parts/micro_laser)
-	cost = 30
+	cost = 50
 	containertype = /obj/structure/closet/crate/secure/scisec
 	containername = "Research and Development Crate"
 	access = access_research
