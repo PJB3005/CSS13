@@ -1,3 +1,9 @@
+//These defines are here because the preprocessor is a fucking piece of trash and not compiling the ones in setup.dm before this file
+#define CONTIGUOUS_WALLS  1
+#define CONTIGUOUS_FLOORS 2
+
+#define TURF_FLOOR 0
+#define TURF_WALL 1
 
 //**************************************************************
 // Map Datum -- Dorf Fort
@@ -255,3 +261,9 @@
 
 ////////////////////////////////////////////////////////////////
 #include "dorf.dmm"
+
+#undef CONTIGUOUS_WALLS
+#undef CONTIGUOUS_FLOORS
+
+#undef TURF_FLOOR
+#undef TURF_WALL

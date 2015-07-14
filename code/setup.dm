@@ -1185,8 +1185,12 @@ var/list/RESTRICTED_CAMERA_NETWORKS = list( //Those networks can only be accesse
 //Default frequencies of signal based RC stuff, because comic and his magic numbers.
 #define FREQ_DISPOSAL 1367
 
-
 //Ore processing types for the ore processor
 #define ORE_PROCESSING_GENERAL 1
 #define ORE_PROCESSING_ALLOY 2
 
+#define CONTIGUOUS_WALLS  1
+#define CONTIGUOUS_FLOORS 2
+
+#define TURF_FLOOR 0
+#define TURF_WALL 1
