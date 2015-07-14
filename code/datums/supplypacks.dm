@@ -935,6 +935,56 @@ var/list/all_supply_groups = list("Supplies","Clothing","Security","Hospitality"
 	group = "Engineering"
 	access = access_ce
 
+/datum/supply_packs/canister_o2
+	contains = list(/obj/machinery/portable_atmospherics/canister/oxygen,
+					/obj/machinery/portable_atmospherics/canister/oxygen
+	)
+	name = "Gas canisters: \[O<sub>2</sub>\]"
+	cost = 15
+	containertype = /obj/structure/closet/crate/large
+	containername = "O2 Canister Crate"
+	group = "Engineering"
+
+/datum/supply_packs/canister_n2
+	contains = list(/obj/machinery/portable_atmospherics/canister/nitrogen,
+					/obj/machinery/portable_atmospherics/canister/nitrogen
+	)
+	name = "Gas canisters: \[N<sub>2</sub>\]"
+	cost = 15
+	containertype = /obj/structure/closet/crate/large
+	containername = "N2 Canister Crate"
+	group = "Engineering"
+
+/datum/supply_packs/canister_co2
+	contains = list(/obj/machinery/portable_atmospherics/canister/carbon_dioxide,
+					/obj/machinery/portable_atmospherics/canister/carbon_dioxide
+	)
+	name = "Gas canisters: \[CO<sub>2</sub>\]"
+	cost = 15
+	containertype = /obj/structure/closet/crate/large
+	containername = "CO2 Canister Crate"
+	group = "Engineering"
+
+/datum/supply_packs/canister_n2o
+	contains = list(/obj/machinery/portable_atmospherics/canister/sleeping_agent,
+					/obj/machinery/portable_atmospherics/canister/sleeping_agent
+	)
+	name = "Gas canisters: \[N<sub>2</sub>O\]"
+	cost = 15
+	containertype = /obj/structure/closet/crate/large
+	containername = "N2O Canister Crate"
+	group = "Engineering"
+
+/datum/supply_packs/canister_plasma
+	contains = list(/obj/machinery/portable_atmospherics/canister/plasma,
+					/obj/machinery/portable_atmospherics/canister/plasma
+	)
+	name = "Gas canisters: \[Plasma]"
+	cost = 15
+	containertype = /obj/structure/closet/crate/large
+	containername = "plasma Canister Crate"
+	group = "Engineering"
+
 //////MEDICAL//////
 
 /datum/supply_packs/medical
