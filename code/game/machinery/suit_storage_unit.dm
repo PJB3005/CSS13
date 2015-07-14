@@ -26,7 +26,7 @@
 	var/safetieson = 1
 	var/cycletime_left = 0
 
-	machine_flags = SCREWTOGGLE
+	machine_flags = SCREWTOGGLE | CROWDESTROY | EJECTNOTDEL
 
 
 //The units themselves/////////////////
@@ -96,6 +96,14 @@
 		MASK = new MASK_TYPE(src)
 	if(BOOT_TYPE)
 		BOOTS = new BOOT_TYPE(src)
+
+	component_parts = newlist(
+		/obj/item/weapon/circuitboard/suit_storage,
+		/obj/item/weapon/stock_parts/console_screen,
+		/obj/item/weapon/stock_parts/matter_bin,
+		/obj/item/weapon/stock_parts/micro_laser,
+		/obj/item/weapon/stock_parts/micro_laser
+	)
 
 /obj/machinery/suit_storage_unit/update_icon()
 	if((stat & NOPOWER) || (stat & BROKEN))

@@ -1092,6 +1092,18 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/capacitor" = 1)
 	board_type = "machine"
 
+/obj/item/weapon/circuitboard/suit_storage
+	name = "circuit board (suit storage unit)"
+	build_path = "/obj/machinery/suit_storage_unit"
+	origin_tech = "material=2;magnets=3;engineering=4;biotech=2"
+	board_type = "machine"
+	frame_desc = "Requires 1 console screen, 2 micro-lasers and 1 matter bin."
+	req_components = list(
+							"/obj/item/weapon/stock_parts/console_screen" = 1,
+							"/obj/item/weapon/stock_parts/micro_laser" = 2,
+							"/obj/item/weapon/stock_parts/matter_bin" = 1
+	)
+
 /*
  *
  *

@@ -3416,6 +3416,16 @@ proc/getScanDesign(var/obj/O)
 	materials = list(MAT_GLASS = 2000, "sacid" = 20)
 	category = "Machine Boards"
 
+/datum/design/suit_storage
+	name = "Circuit Design (Suit Storage Unit)"
+	desc = "Allows for the construction of circuit boards used to build a suit storage unit."
+	id = "suit_storage"
+	build_path = /obj/item/weapon/circuitboard/suit_storage
+	build_type = IMPRINTER
+	materials = list(MAT_GLASS = 2000, "sacid" = 20)
+	category = "Machine Boards"
+	req_tech = list("materials" = 3, "engineering" = 4, "magnets" = 3, "biotech" = 2)
+
 /*
  *
  *
