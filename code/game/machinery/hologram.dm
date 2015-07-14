@@ -38,6 +38,29 @@ var/const/HOLOPAD_MODE = 0
 	var/holo_range = 5 // Change to change how far the AI can move away from the holopad before deactivating.
 	flags = HEAR
 
+	machine_flags = SCREWTOGGLE | CROWDESTROY
+
+/obj/machinery/hologram/holopad/New()
+	. = ..()
+
+	component_parts = newlist(
+		/obj/item/weapon/circuitboard/holopad,
+		/obj/item/weapon/stock_parts/micro_laser,
+		/obj/item/weapon/stock_parts/micro_laser,
+		/obj/item/weapon/stock_parts/micro_laser,
+		/obj/item/weapon/stock_parts/scanning_module,
+		/obj/item/weapon/stock_parts/scanning_module
+	)
+
+	RefreshParts()
+
+/obj/machinery/hologram/holopad/RefreshParts()
+	var/T = 0
+	for(var/obj/item/weapon/stock_parts/I in component_parts)
+		T += I.rating
+
+	holo_range = max(initial(holo_range), T)	//max() just in case.
+
 /obj/machinery/hologram/holopad/attack_hand(var/mob/living/carbon/human/user) //Carn: Hologram requests.
 	if(!istype(user))
 		return

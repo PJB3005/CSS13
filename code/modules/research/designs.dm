@@ -3426,6 +3426,16 @@ proc/getScanDesign(var/obj/O)
 	category = "Machine Boards"
 	req_tech = list("materials" = 3, "engineering" = 4, "magnets" = 3, "biotech" = 2)
 
+/datum/design/holopad
+	name = "Circuit Design (AI Holopad)"
+	desc = "Allows for the construction of circuit boards used to build an AI holopad"
+	id = "holopad"
+	build_path = /obj/item/weapon/circuitboard/holopad
+	build_type = IMPRINTER
+	materials = list(MAT_GLASS = 2000, "sacid" = 20)
+	category = "Machine Boards"
+	req_tech = list("programming" = 3, "engineering" = 2, "magnets" = 4)
+
 /*
  *
  *

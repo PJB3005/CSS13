@@ -1104,6 +1104,17 @@ obj/item/weapon/circuitboard/rdserver
 							"/obj/item/weapon/stock_parts/matter_bin" = 1
 	)
 
+/obj/item/weapon/circuitboard/holopad
+	name = "circuit board (AI holopad)"
+	build_path = "/obj/machinery/hologram/holopad"
+	origin_tech = "programming=3;magnets=4;engineering=1"
+	board_type = "machine"
+	frame_desc = "Requires 3 micro-lasers and 2 scanning modules."
+	req_components = list(
+							"/obj/item/weapon/stock_parts/micro_laser" = 3,
+							"/obj/item/weapon/stock_parts/sanning_module" = 2
+	)
+
 /*
  *
  *
