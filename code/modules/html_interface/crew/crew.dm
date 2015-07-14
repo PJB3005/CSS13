@@ -158,6 +158,8 @@ var/global/datum/crewmonitor/crewmonitor = new
 			var/area
 			var/pos_x
 			var/pos_y
+			var/see_pos_x
+			var/see_pos_y
 			var/life_status
 
 			for(var/mob/living/carbon/human/H in mob_list)
@@ -205,12 +207,16 @@ var/global/datum/crewmonitor/crewmonitor = new
 							area = format_text(player_area.name)
 							pos_x = pos.x
 							pos_y = pos.y
+							see_pos_x = pos.x + WORLD_X_OFFSET[z]
+							see_pos_y = pos.y + WORLD_Y_OFFSET[z]
 						else
 							area = null
 							pos_x = null
 							pos_y = null
+							see_pos_x = null
+							see_pos_y = null
 
-						results[++results.len] = list(name, assignment, ijob, life_status, dam1, dam2, dam3, dam4, area, pos_x, pos_y, H.monitor_check())
+						results[++results.len] = list(name, assignment, ijob, life_status, dam1, dam2, dam3, dam4, area, pos_x, pos_y, H.monitor_check(), see_pos_x, see_pos_y)
 
 			src.data = results
 			src.updateFor(null, hi, z) // updates for everyone
@@ -258,6 +264,13 @@ var/global/datum/crewmonitor/crewmonitor = new
 						spawn(min(30, get_dist(get_turf(C), AI.eyeobj) / 4))
 							if (AI && AI.eyeobj && current_loc == AI.eyeobj.loc)
 								AI.switchCamera(C)
+				if ("crewclick")
+					var/x = text2num(href_list["x"])
+					var/y = text2num(href_list["y"])
+					var/turf/tile = locate(x, y, AI.z)
+					if(tile)
+						AI.eyeobj.setLoc(tile)
+
 		else if(hclient && hclient.client && hclient.client.mob)
 			var/mob/living/L = hclient.client.mob
 			if(!istype(L)) return

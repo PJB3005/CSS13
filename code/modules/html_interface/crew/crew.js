@@ -249,7 +249,8 @@
 var isAI = null;
 var scale_x;
 var scale_y;
-
+var defaultzoom = 4;
+var html5compat = false;
 function disableSelection(){ return false; };
 
 $(window).on("onUpdateContent", function()
@@ -260,22 +261,41 @@ $(window).on("onUpdateContent", function()
 
 	$("#uiMap").append("<img src=\"minimap_" + z + ".png\" id=\"uiMapImage\" width=\"256\" height=\"256\" unselectable=\"on\"/><div id=\"uiMapContent\" unselectable=\"on\"></div>");
 	$("#uiMapContainer").append("<div id=\"uiMapTooltip\"></div>");
-
+	if(!html5compat){
+		var i = document.createElement("input");
+		i.setAttribute("type", "range");
+		html5compat = i.type !== "text";
+	}
+	if(html5compat){
 	$("#switches").append("<div id='zoomcontainer' style='position: static; z-index: 9999; margin-bottom: -75px;'>Zoom: <div id='zoomslider' style='width: 75px; position: relative; top: -31px; right: -50px; z-index: 9999;'><input type=\"range\" onchange=\"setzoom(value);\" value=\"4\" step=\"0.5\" max=\"16\" min=\"0.5\" id=\"zoom\"></div><div id=\"zoomval\" style='position:relative; z-index: 9999; right: -135px; top: -80px; color: white;'>100%</div></div>");
+	}
+	else{
+			$("#switches").append(" Zoom: <a href='javascript:changeZoom(-2);'>--</a> <a href='javascript:changeZoom(2);'>++</a> <span id=\"zoomval\" style='color: white;'>100%</span>");
+
+	}
 	//$("body")[0].onselectstart = disableSelection;
 
-	var width = $("#uiMapImage").width();
+	var width = $("#uiMap").width();
 
 	scale_x = width / (maxx * tile_size);
 	scale_y = width / (maxy * tile_size); // height is assumed to be the same
-
+/*
 	$("#uiMap").on("click", function(e)
 	{
 		var x		= ((((e.clientX - 8) / scale_x) / tile_size) + 1).toFixed(0);
 		var y		= ((maxy - (((e.clientY - 8) / scale_y) / tile_size)) + 1).toFixed(0);
 
 		window.location.href = "byond://?src=" + hSrc + "&action=select_position&x=" + x + "&y=" + y;
-	});
+	});*/
+	$("#uiMap").css({	position: 'absolute',
+						top: '50%',
+						left: '50%',
+						margin: '-512px 0 0 -512px',
+						width: '256px',
+						height: '256px',
+						overflow: 'hidden',
+						zoom: '4'
+					});
 	$('#uiMap').drags({handle : '#uiMapImage'});
 	$('#uiMapTooltip')
 		.off('click')
@@ -283,6 +303,19 @@ $(window).on("onUpdateContent", function()
 			event.preventDefault();
 			$(this).fadeOut(400);
 		});
+	$('#uiMap').click(function(ev) {
+		var el = document.getElementById('uiMap');
+		var rect = el.getBoundingClientRect();
+		var tileX = (((ev.clientX - rect.left - el.clientLeft + el.scrollLeft)) / defaultzoom + 7).toFixed(0);
+		var tileY = (maxy-((ev.clientY - rect.top - el.clientTop + el.scrollTop)) / defaultzoom).toFixed(0);
+		var xx = ((ev.clientX - rect.left - el.clientLeft + el.scrollLeft) / defaultzoom).toFixed(0);
+		var yy = ((ev.clientY - rect.top - el.clientTop + el.scrollTop) / defaultzoom).toFixed(0);
+		//var dot = document.createElement('div');
+		//dot.setAttribute('style', 'position:absolute; width: 2px; height: 2px; top: '+top+'px; left: '+left+'px; background: red; z-index: 99999999;');
+		//el.appendChild(dot);
+		//alert(tileX + ' ' + tileY);
+		window.location.href = "byond://?src=" + hSrc + "&action=crewclick&x=" + tileX + "&y=" + tileY + "&z=" + z;
+	});
 });
 
 var updateMap = true;
@@ -347,7 +380,7 @@ function switchTo(i)
 		//$("document").height("800px");
 	}
 }
-var defaultzoom = 4;
+
 function changeZoom(offset){
 	defaultzoom = Math.max(defaultzoom + offset, 1);
 	var uiMapObject = $('#uiMap');
@@ -403,7 +436,7 @@ function getColor(ijob)
 	else								{ return "#C38312"; } // other / unknown
 }
 
-function add(name, assignment, ijob, life_status, dam1, dam2, dam3, dam4, area, pos_x, pos_y, in_range)
+function add(name, assignment, ijob, life_status, dam1, dam2, dam3, dam4, area, pos_x, pos_y, in_range, see_pos_x, see_pos_y)
 {
 	try							{ ijob = parseInt(ijob); }
 	catch (ex)					{ ijob = 0; }
@@ -476,7 +509,7 @@ function add(name, assignment, ijob, life_status, dam1, dam2, dam3, dam4, area, 
 
 	tdElem						= $("<td style=\"cursor: default;\"></td>");
 
-	if (area && pos_x && pos_y)	{ tdElem.append($("<div></div>").text(area).addClass("tt").append($("<div></div>").append($("<span></span>").text("(" + pos_x + ", " + pos_y + ")")))); }
+	if (area && pos_x && pos_y)	{ tdElem.append($("<div></div>").text(area).addClass("tt").append($("<div></div>").append($("<span></span>").text("(" + see_pos_x + ", " + see_pos_y + ")")))); }
 	else						{ tdElem.text("Not Available"); }
 
 	trElem.append(tdElem);
@@ -494,7 +527,7 @@ function add(name, assignment, ijob, life_status, dam1, dam2, dam3, dam4, area, 
 		var tx					= (translate(x - 1, scale_x) - 1).toFixed(0);
 		var ty					= (translate(y - 1, scale_y) + 7).toFixed(0);
 
-		var dotElem				= $("<div class=\"mapIcon mapIcon16 rank-" +  ijobNames[ijob.toString()] + " " + (avg_dam <= 25 ? 'good' : (avg_dam > 25 && avg_dam <= 90 ? 'average' : 'bad')) + "\" style =\"top:" + ty +"px; left: " + tx + "px;\" z-index: 2; unselectable=\"on\"><div class=\"tooltip hidden\">" + name + " " + (life_status ? "<span class='good'>Living</span>" : "<span class='bad'>Deceased</span>") + " (<span class=\"oxyloss_light\">" + dam1 + "</span>/<span class=\"toxin_light\">" + dam2 + "</span>/<span class=\"burn\">" + dam3 + "</span>/<span class=\"brute\">" + dam4 + "</span>) "+area+": "+pos_x+", "+pos_y+")</div></div>");
+		var dotElem				= $("<div class=\"mapIcon mapIcon16 rank-" +  ijobNames[ijob.toString()] + " " + (avg_dam <= 25 ? 'good' : (avg_dam > 25 && avg_dam <= 90 ? 'average' : 'bad')) + "\" style =\"top:" + ty +"px; left: " + tx + "px;\" z-index: 2; unselectable=\"on\"><div class=\"tooltip hidden\">" + name + " " + (life_status ? "<span class='good'>Living</span>" : "<span class='bad'>Deceased</span>") + " (<span class=\"oxyloss_light\">" + dam1 + "</span>/<span class=\"toxin_light\">" + dam2 + "</span>/<span class=\"fire\">" + dam3 + "</span>/<span class=\"brute\">" + dam4 + "</span>) "+area+": "+see_pos_x+", "+see_pos_y+")</div></div>");
 		//$("#uiMap").append("<div class=\"dot\" style=\"top: " + ty + "px; left: " + tx + "px; background-color: " + color + "; z-index: " + 999 + ";\"></div>");
 
 		$("#uiMap").append(dotElem);

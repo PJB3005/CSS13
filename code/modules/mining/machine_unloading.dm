@@ -13,7 +13,7 @@
 	var/in_dir	= 8
 	var/out_dir	= 4
 
-	var/max_moved = 10
+	var/max_moved = 100
 
 /obj/machinery/mineral/unloading_machine/New()
 	..()

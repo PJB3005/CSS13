@@ -744,6 +744,7 @@
 		if(do_mob(usr, src, HUMAN_STRIP_DELAY))
 			if(pocket_item)
 				u_equip(pocket_item,1)
+				pocket_item.stripped(src,usr)
 				if(pickpocket) usr.put_in_hands(pocket_item)
 			else
 				if(place_item)
@@ -1314,7 +1315,7 @@
 	.=..()
 	if(clean_feet && !shoes && istype(feet_blood_DNA, /list) && feet_blood_DNA.len)
 		feet_blood_color = null
-		del(feet_blood_DNA)
+		feet_blood_DNA.len = 0
 		update_inv_shoes(1)
 		return 1
 
