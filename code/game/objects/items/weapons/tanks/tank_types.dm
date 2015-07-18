@@ -18,7 +18,11 @@
 
 /obj/item/weapon/tank/oxygen/New()
 	. = ..()
-	air_contents.adjust((6 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C))
+	if(!empty)
+		air_contents.adjust((6 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C))
+
+/obj/item/weapon/tank/oxygen/empty
+	empty = 1
 
 /obj/item/weapon/tank/oxygen/yellow
 	desc = "A tank of oxygen, this one is yellow."
@@ -39,9 +43,13 @@
 
 /obj/item/weapon/tank/anesthetic/New()
 	. = ..()
-	var/datum/gas/sleeping_agent/sleeping_agent = new
-	sleeping_agent.moles = (3 * ONE_ATMOSPHERE) * 70 / (R_IDEAL_GAS_EQUATION * T20C) * N2STANDARD
-	air_contents.adjust((3 * ONE_ATMOSPHERE) * 70 / (R_IDEAL_GAS_EQUATION * T20C) * O2STANDARD, , , , list(sleeping_agent))
+	if(!empty)
+		var/datum/gas/sleeping_agent/sleeping_agent = new
+		sleeping_agent.moles = (3 * ONE_ATMOSPHERE) * 70 / (R_IDEAL_GAS_EQUATION * T20C) * N2STANDARD
+		air_contents.adjust((3 * ONE_ATMOSPHERE) * 70 / (R_IDEAL_GAS_EQUATION * T20C) * O2STANDARD, , , , list(sleeping_agent))
+
+/obj/item/weapon/tank/anesthetic/empty
+	empty = 1
 
 /*
  * Air
@@ -53,7 +61,8 @@
 
 /obj/item/weapon/tank/air/New()
 	. = ..()
-	air_contents.adjust((6 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C) * O2STANDARD, , (6 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C) * N2STANDARD)
+	if(!empty)
+		air_contents.adjust((6 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C) * O2STANDARD, , (6 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C) * N2STANDARD)
 
 /*
  * Plasma
@@ -67,7 +76,8 @@
 
 /obj/item/weapon/tank/plasma/New()
 	. = ..()
-	air_contents.adjust(, , , (3 * ONE_ATMOSPHERE) * 70 / (R_IDEAL_GAS_EQUATION * T20C))
+	if(!empty)
+		air_contents.adjust(, , , (3 * ONE_ATMOSPHERE) * 70 / (R_IDEAL_GAS_EQUATION * T20C))
 
 /obj/item/weapon/tank/plasma/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	..()
@@ -81,10 +91,16 @@
 		src.loc = F
 	return
 
+/obj/item/weapon/tank/plasma/empty
+	empty = 1
+
 /obj/item/weapon/tank/plasma/plasmaman
 	desc = "The lifeblood of plasmamen.  Warning:  Extremely flammable, do not inhale (unless you're a plasmaman)."
 	icon_state = "plasma_fr"
 	distribute_pressure = ONE_ATMOSPHERE*O2STANDARD
+
+/obj/item/weapon/tank/plasma/plasmaman/empty
+	empty = 1
 
 /*
  * Emergency Oxygen
@@ -100,19 +116,35 @@
 	distribute_pressure = ONE_ATMOSPHERE*O2STANDARD
 	volume = 2 //Tiny. Real life equivalents only have 21 breaths of oxygen in them. They're EMERGENCY tanks anyway -errorage (dangercon 2011)
 
+	starting_materials = list(MAT_IRON = 200)
+
 /obj/item/weapon/tank/emergency_oxygen/New()
 	. = ..()
-	air_contents.adjust((3 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C))
+	if(!empty)
+		air_contents.adjust((3 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C))
+
+/obj/item/weapon/tank/emergency_oxygen/empty
+	empty = 1
 
 /obj/item/weapon/tank/emergency_oxygen/engi
 	name = "extended-capacity emergency oxygen tank"
 	icon_state = "emergency_engi"
 	volume = 6
 
+	starting_materials = list(MAT_IRON = 500)
+
+/obj/item/weapon/tank/emergency_oxygen/engi/empty
+	empty = 1
+
 /obj/item/weapon/tank/emergency_oxygen/double
 	name = "double emergency oxygen tank"
 	icon_state = "emergency_double"
 	volume = 10
+
+	starting_materials = list(MAT_IRON = 700)
+
+/obj/item/weapon/tank/emergency_oxygen/double/empty
+	empty = 1
 
 /obj/item/weapon/tank/emergency_nitrogen
 	name = "emergency nitrogen tank"
@@ -122,9 +154,15 @@
 	w_class = 2.0
 	volume = 2
 
+	starting_materials = list(MAT_IRON = 200)
+
 /obj/item/weapon/tank/emergency_nitrogen/New()
 	. = ..()
-	air_contents.adjust(, , (3 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C))
+	if(!empty)
+		air_contents.adjust(, , (3 * ONE_ATMOSPHERE) * volume / (R_IDEAL_GAS_EQUATION * T20C))
+
+/obj/item/weapon/tank/emergency_nitrogen/empty
+	empty = 1
 
 /*
  * Nitrogen
@@ -137,4 +175,8 @@
 
 /obj/item/weapon/tank/nitrogen/New()
 	. = ..()
-	air_contents.adjust(, , (3 * ONE_ATMOSPHERE) * 70 / (R_IDEAL_GAS_EQUATION * T20C))
+	if(!empty)
+		air_contents.adjust(, , (3 * ONE_ATMOSPHERE) * 70 / (R_IDEAL_GAS_EQUATION * T20C))
+
+/obj/item/weapon/tank/nitrogen/empty
+	empty = 1

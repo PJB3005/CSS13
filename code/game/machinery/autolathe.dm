@@ -83,6 +83,17 @@
 		new /obj/item/ammo_storage/speedloader/c38/empty(), \
 		new /obj/item/ammo_storage/box/c38(), \
 		),
+		"Gas_Tanks" = list(
+		new /obj/item/weapon/tank/oxygen/empty(), \
+		new /obj/item/weapon/tank/nitrogen/empty(), \
+		new /obj/item/weapon/tank/anesthetic/empty(), \
+		new /obj/item/weapon/tank/emergency_nitrogen/empty(), \
+		new /obj/item/weapon/tank/emergency_oxygen/empty(), \
+		new /obj/item/weapon/tank/emergency_oxygen/engi/empty(), \
+		new /obj/item/weapon/tank/emergency_oxygen/double/empty(), \
+		new /obj/item/weapon/tank/plasma/empty(), \
+		new /obj/item/weapon/tank/plasma/plasmaman/empty(), \
+		),
 		"Misc_Tools"=list(
 		new /obj/item/device/flashlight(), \
 		new /obj/item/weapon/extinguisher(), \
