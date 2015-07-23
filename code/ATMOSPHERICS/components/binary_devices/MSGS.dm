@@ -100,22 +100,33 @@
 	updateUsrDialog()
 
 /obj/machinery/atmospherics/binary/msgs/updateUsrDialog()
+	if(!interface.inUse())
+		return
+
 	interface.updateContent("pressurereadout", air.return_pressure())
 	interface.updateContent("tempreadout", air.return_temperature())
 
 	var/total_moles = air.total_moles()
-	interface.updateContent("oxypercent", round(100 * air.oxygen			/ total_moles, 0.1))
-	interface.updateContent("nitpercent", round(100 * air.nitrogen			/ total_moles, 0.1))
-	interface.updateContent("co2percent", round(100 * air.carbon_dioxide	/ total_moles, 0.1))
-	interface.updateContent("plapercent", round(100 * air.toxins			/ total_moles, 0.1))
+	if(total_moles)
+		interface.updateContent("oxypercent", round(100 * air.oxygen			/ total_moles, 0.1))
+		interface.updateContent("nitpercent", round(100 * air.nitrogen			/ total_moles, 0.1))
+		interface.updateContent("co2percent", round(100 * air.carbon_dioxide	/ total_moles, 0.1))
+		interface.updateContent("plapercent", round(100 * air.toxins			/ total_moles, 0.1))
 
-	//Begin stupid shit to get the N2O amount.
-	var/datum/gas/sleeping_agent/G = locate(/datum/gas/sleeping_agent) in air.trace_gases
-	var/n2o_moles = 0
-	if(G)
-		n2o_moles = G.moles
+		//Begin stupid shit to get the N2O amount.
+		var/datum/gas/sleeping_agent/G = locate(/datum/gas/sleeping_agent) in air.trace_gases
+		var/n2o_moles = 0
+		if(G)
+			n2o_moles = G.moles
 
-	interface.updateContent("n2opercent", round(100 * n2o_moles			/ total_moles, 0.1))
+		interface.updateContent("n2opercent", round(100 * n2o_moles			/ total_moles, 0.1))
+
+	else
+		interface.updateContent("oxypercent", 0)
+		interface.updateContent("nitpercent", 0)
+		interface.updateContent("co2percent", 0)
+		interface.updateContent("plapercent", 0)
+		interface.updateContent("n2opercent", 0)
 
 	if(on)
 		interface.updateContent("inputtoggles",	{"<a href="?src=\ref[interface];power=1" class="linkOn">Enable</a> <a href="?src=\ref[interface];power=0">Disable</a>"})
