@@ -125,6 +125,12 @@ a.icon img, .linkOn.icon img
 	height: 18px;
 }
 
+.linkDanger, a.linkDanger:link, a.linkDanger:visited, a.linkDanger:active {
+    color: #ffffff;
+    background-color: #ff0000;
+    border-color: #aa0000;
+}
+
 ul
 {
 	padding: 4px 0 0 10px;
@@ -230,7 +236,7 @@ div.notice
 	color: #ffffff;
 	border: 1px solid #40628a;
 	padding: 4px;
-	margin: 3px 0;
+	margin: 3px 0	;
 }
 
 .statusLabel
@@ -244,6 +250,23 @@ div.notice
 .statusValue
 {
 	float: left;
+}
+
+.item {
+    width: 100%;
+    margin: 4px 0 0 0;
+    clear: both;
+}
+
+.itemLabel {
+    float: left;
+    width: 30%;
+    color: #e9c183;
+}
+
+.itemContent {
+    float: left;
+    width: 69%;
 }
 
 .block
@@ -320,4 +343,12 @@ div.notice
 {
 	width: 100%;
 	clear: both;
+}
+
+input
+{
+	background-color: #202020;
+	border-color: #40628a;
+	border-style: solid;
+	color: white;
 }
