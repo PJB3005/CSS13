@@ -100,7 +100,7 @@
 	updateUsrDialog()
 
 /obj/machinery/atmospherics/binary/msgs/updateUsrDialog()
-	if(!interface.inUse())
+	if(!interface.isUsed())
 		return
 
 	interface.updateContent("pressurereadout", air.return_pressure())
