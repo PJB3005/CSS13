@@ -1,24 +1,30 @@
 /obj/machinery/atmospherics/binary/msgs
-	name = "\improper Magnetically Suspended Gas Storage Unit."
+	name = "\improper Magnetically Suspended Gas Storage Unit"
 	desc = "Stores large quantities of gas in electro-magnetic suspension."
 	icon = 'icons/obj/atmospherics/msgs.dmi'
-	icon_state = "on"
+	icon_state = "msgs"
+	density = 1
+
+	machine_flags = WRENCHMOVE | FIXED2WORK
+
+	var/internal_volume = 10000
 
 	var/target_pressure = 4500	//Output pressure.
 	var/on = 0								//Are we taking in gas?
 
 	var/datum/gas_mixture/air				//Internal tank.
 
-	var/datum/html_interface/interface
+	var/datum/html_interface/nanotrasen/interface
 
 /obj/machinery/atmospherics/binary/msgs/New()
 	. = ..()
 
 	html_machines += src
 
-	interface = new(src, sanitize(name), width = 420, height = 400)	//MSGSses don't have fires inside them, I think.
+	interface = new(src, sanitize(name), 420, 400)	//MSGSses don't have fires inside them, I think.
 
 	air = new
+	air.volume = internal_volume
 
 //Here we set the content of the interface.
 /obj/machinery/atmospherics/binary/msgs/proc/init_ui()
@@ -74,13 +80,13 @@
 	//Output handling, stolen from pump code.
 	var/output_starting_pressure = air2.return_pressure()
 
-	if((target_pressure - output_starting_pressure) < 0.01)
+	if((target_pressure - output_starting_pressure) > 0.01)
 		//No need to output gas if target is already reached!
 
 		//Calculate necessary moles to transfer using PV=nRT
 		if((air.total_moles() > 0) && (air.temperature > 0))
 			var/pressure_delta = target_pressure - output_starting_pressure
-			var/transfer_moles = pressure_delta * air2.volume / (air1.temperature * R_IDEAL_GAS_EQUATION)
+			var/transfer_moles = pressure_delta * air2.volume / (air.temperature * R_IDEAL_GAS_EQUATION)
 
 			//Actually transfer the gas
 			var/datum/gas_mixture/removed = air.remove(transfer_moles)
@@ -143,10 +149,12 @@
 	if(href_list["power"])
 		on = Clamp(text2num(href_list["power"]), 0, 1)
 		updateUsrDialog()
+		update_icon()
 		return 1
 
 	if(href_list["set_pressure"])
 		target_pressure = round(Clamp(text2num(href_list["set_pressure"]), 0, 4500))
+		update_icon()
 		updateUsrDialog()
 		return 1
 
@@ -178,9 +186,59 @@
 	if(!(stat & (NOPOWER | BROKEN)))
 		var/p = Clamp(round(target_pressure / 5), 1, 5)
 
-		overlays += "0-[p]"
+		overlays += "o-[p]"
 
 		overlays += "p"
 
 		if(on)
 			overlays += "i"
+
+/obj/machinery/atmospherics/binary/msgs/wrenchAnchor(mob/user)
+	..()
+	if(anchored)
+		if(dir & (NORTH|SOUTH))
+			initialize_directions = NORTH|SOUTH
+		else if(dir & (EAST|WEST))
+			initialize_directions = EAST|WEST
+
+		initialize()
+		build_network()
+		if (node1)
+			node1.initialize()
+			node1.build_network()
+		if (node2)
+			node2.initialize()
+			node2.build_network()
+	else
+		if(node1)
+			node1.disconnect(src)
+			if(network1)
+				returnToDPool(network1)
+		if(node2)
+			node2.disconnect(src)
+			if(network2)
+				returnToDPool(network2)
+
+		node1 = null
+		node2 = null
+
+/obj/machinery/atmospherics/binary/msgs/verb/rotate_clockwise()
+	set category = "Object"
+	set name = "Rotate MSGS (Clockwise)"
+	set src in view(1)
+
+	if (usr.stat || usr.restrained() || anchored || (usr.status_flags & FAKEDEATH))
+		return
+
+	src.dir = turn(src.dir, 90)
+
+
+/obj/machinery/atmospherics/binary/msgs/verb/rotate_anticlockwise()
+	set category = "Object"
+	set name = "Rotate MSGS (Counter-clockwise)"
+	set src in view(1)
+
+	if (usr.stat || usr.restrained() || anchored || (usr.status_flags & FAKEDEATH))
+		return
+
+	src.dir = turn(src.dir, -90)
