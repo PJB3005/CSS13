@@ -218,7 +218,7 @@
 		update = 1
 
 	var/pressure = air.return_pressure()
-	var/i = round(pressure, max_pressure / 5)
+	var/i = Clamp(round(pressure / (max_pressure / 5)), 0, 5)
 	if(i != last_pressure)
 
 	if(!update)
