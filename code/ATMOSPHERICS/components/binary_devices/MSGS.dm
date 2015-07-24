@@ -1,3 +1,6 @@
+#define MSGS_ON					1
+#define MSGS_INPUT				2
+
 /obj/machinery/atmospherics/binary/msgs
 	name = "\improper Magnetically Suspended Gas Storage Unit"
 	desc = "Stores large quantities of gas in electro-magnetic suspension."
@@ -6,8 +9,10 @@
 	density = 1
 
 	machine_flags = WRENCHMOVE | FIXED2WORK
+	idle_power_usage = 1000					//This thing's serious
 
 	var/internal_volume = 10000
+	var/max_pressure = 10000
 
 	var/target_pressure = 4500	//Output pressure.
 	var/on = 0								//Are we taking in gas?
@@ -16,15 +21,22 @@
 
 	var/datum/html_interface/nanotrasen/interface
 
+	var/tmp/update_flags
+	var/tmp/last_pressure
+
 /obj/machinery/atmospherics/binary/msgs/New()
 	. = ..()
 
 	html_machines += src
 
-	interface = new(src, sanitize(name), 420, 400)	//MSGSses don't have fires inside them, I think.
+	interface = new(src, sanitize(name), 500, 520)
+
+	init_ui()
 
 	air = new
 	air.volume = internal_volume
+
+	update_icon()
 
 //Here we set the content of the interface.
 /obj/machinery/atmospherics/binary/msgs/proc/init_ui()
@@ -57,7 +69,7 @@
 		<div class="item">
 			<div class="itemLabel">Output pressure (kPa): </div>
 			<div class="itemContent">
-				<form action="?src=\ref[interface]" method="get">
+				<form action="?src=\ref[interface]" method="get"><input type="hidden" name="src" value="\ref[src]"/>
 					<span id="pressureinput"><input type="textbox" name="set_pressure" value="0"/></span> <input type="submit" name="act" value="Set"/>
 				</form>
 			</div>
@@ -95,29 +107,47 @@
 			if(network2)
 				network2.update = 1
 
-	//Input handling.
-	if(on)
-		var/datum/gas_mixture/removed = air1.remove(air1.total_moles())
-		air.merge(removed)
+	//Input handling. Literally pump code again with the target pressure being the max pressure of the MSGS
+	var/input_starting_pressure = air1.return_pressure()
 
-		if(network1)
-			network1.update = 1
+	if((max_pressure - input_starting_pressure) > 0.01)
+		//No need to output gas if target is already reached!
+
+		//Calculate necessary moles to transfer using PV=nRT
+		if((air1.total_moles() > 0) && (air1.temperature > 0))
+			var/pressure_delta = max_pressure - input_starting_pressure
+			var/transfer_moles = pressure_delta * air.volume / (air1.temperature * R_IDEAL_GAS_EQUATION)
+
+			//Actually transfer the gas
+			var/datum/gas_mixture/removed = air1.remove(transfer_moles)
+			air.merge(removed)
+
+			if(network1)
+				network1.update = 1
 
 	updateUsrDialog()
+	update_icon()
+
+//Screw having to set a machine.
+/obj/machinery/atmospherics/binary/msgs/hiIsValidClient(datum/html_interface_client/hclient, datum/html_interface/hi)
+	if(hclient.client.mob)
+		return hclient.client.mob.html_mob_check(src.type)
 
 /obj/machinery/atmospherics/binary/msgs/updateUsrDialog()
 	if(!interface.isUsed())
+		testing("MSGS: dialog not updated because the interface isn't in use!")
 		return
 
-	interface.updateContent("pressurereadout", air.return_pressure())
+	testing("MSGS: updating dialog.")
+	interface.updateContent("pressurereadout", round(air.return_pressure(), 0.01))
 	interface.updateContent("tempreadout", air.return_temperature())
 
 	var/total_moles = air.total_moles()
-	if(total_moles)
-		interface.updateContent("oxypercent", round(100 * air.oxygen			/ total_moles, 0.1))
-		interface.updateContent("nitpercent", round(100 * air.nitrogen			/ total_moles, 0.1))
-		interface.updateContent("co2percent", round(100 * air.carbon_dioxide	/ total_moles, 0.1))
-		interface.updateContent("plapercent", round(100 * air.toxins			/ total_moles, 0.1))
+	if(round(total_moles, 0.01))	//Check if there's total moles to avoid divisions by zero.
+		interface.updateContent("oxypercent", Clamp(round(100 * air.oxygen			/ total_moles, 0.1), 0, 100))
+		interface.updateContent("nitpercent", Clamp(round(100 * air.nitrogen		/ total_moles, 0.1), 0, 100))
+		interface.updateContent("co2percent", Clamp(round(100 * air.carbon_dioxide	/ total_moles, 0.1), 0, 100))
+		interface.updateContent("plapercent", Clamp(round(100 * air.toxins			/ total_moles, 0.1), 0, 100))
 
 		//Begin stupid shit to get the N2O amount.
 		var/datum/gas/sleeping_agent/G = locate(/datum/gas/sleeping_agent) in air.trace_gases
@@ -125,7 +155,7 @@
 		if(G)
 			n2o_moles = G.moles
 
-		interface.updateContent("n2opercent", round(100 * n2o_moles			/ total_moles, 0.1))
+		interface.updateContent("n2opercent", Clamp(round(100 * n2o_moles			/ total_moles, 0.1), 0, 100))
 
 	else
 		interface.updateContent("oxypercent", 0)
@@ -146,8 +176,10 @@
 	if(.)
 		return
 
+	world << "MSGS: received a Topic() call."
+
 	if(href_list["power"])
-		on = Clamp(text2num(href_list["power"]), 0, 1)
+		on = round(Clamp(text2num(href_list["power"]), 0, 1))
 		updateUsrDialog()
 		update_icon()
 		return 1
@@ -161,6 +193,8 @@
 /obj/machinery/atmospherics/binary/msgs/attack_hand(var/mob/user)
 	. = ..()
 	if(.)
+		if(user.machine == src)
+			user.unset_machine()
 		return
 
 	interface.show(user)
@@ -176,6 +210,20 @@
 /obj/machinery/atmospherics/binary/msgs/update_icon()
 	. = ..()
 
+	var/update = 0
+	if((update_flags & MSGS_INPUT) != on)
+		update = 1
+
+	if((update_flags & MSGS_ON) != !(stat & (NOPOWER | BROKEN)))
+		update = 1
+
+	var/pressure = air.return_pressure()
+	var/i = round(pressure, max_pressure / 5)
+	if(i != last_pressure)
+
+	if(!update)
+		return
+
 	overlays.Cut()
 	if(node1)
 		overlays += "node-1"
@@ -184,9 +232,8 @@
 		overlays += "node-2"
 
 	if(!(stat & (NOPOWER | BROKEN)))
-		var/p = Clamp(round(target_pressure / 5), 1, 5)
 
-		overlays += "o-[p]"
+		overlays += "o-[i]"
 
 		overlays += "p"
 
@@ -242,3 +289,6 @@
 		return
 
 	src.dir = turn(src.dir, -90)
+
+#undef MSGS_ON
+#undef MSGS_INPUT
