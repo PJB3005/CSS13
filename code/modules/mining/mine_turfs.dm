@@ -573,6 +573,7 @@
 		"Gibtonite" = 5,
 		"Diamond"   = 1,
 		"Cave"      = 1,
+		"Iceous Nitrous Oxide" = 25,
 		/*
 		"Pharosium"  = 5,
 		"Char"  = 5,
@@ -619,6 +620,7 @@
 		"Gold"    = 10,
 		"Silver"  = 10,
 		"Plasma"  = 25,
+		"Iceous Nitrous Oxide" = 25,
 		/*
 		"Pharosium"  = 5,
 		"Char"  = 5,

@@ -181,6 +181,14 @@ mineral/cave
 	ore = null
 	UpdateTurf(var/turf/T)
 		if(!istype(T,/turf/unsimulated/floor/asteroid/cave))
-			T.ChangeTurf(/turf/unsimulated/floor/asteroid/cave)
+				T.ChangeTurf(/turf/unsimulated/floor/asteroid/cave)
 		else
 			..()
+
+//Solid N2O crystal embedded in a rock.
+/mineral/n2o
+	display_name = "\improper Iceous Nitrous Oxide"
+	name = "Iceous Nitrous Oxide"
+	result_amount = 5
+	spread_chance = 25
+	ore = /obj/item/weapon/solid_n2o
