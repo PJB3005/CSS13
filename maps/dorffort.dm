@@ -31,6 +31,7 @@
 	base_turf = /turf/unsimulated/floor/asteroid
 
 /proc/make_dorf_secret()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/proc/make_dorf_secret() called tick#: [world.time]")
 	var/turf/T = null
 	var/sanity = 0
 	var/list/turfs = null

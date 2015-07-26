@@ -53,7 +53,7 @@
 	if(ismob(body))
 		T = get_turf(body)				//Where is the body located?
 		attack_log = body.attack_log	//preserve our attack logs by copying them to our ghost
-
+		if(!istype(attack_log, /list)) attack_log = list()
 		// NEW SPOOKY BAY GHOST ICONS
 		//////////////
 
@@ -101,6 +101,13 @@
 		name = capitalize(pick(first_names_male)) + " " + capitalize(pick(last_names))
 	real_name = name
 	..()
+
+/mob/dead/observer/Destroy()
+	..()
+	following = null
+	ghostMulti = null
+	canclone = null
+	observers.Remove(src)
 
 /mob/dead/observer/hasFullAccess()
 	return isAdminGhost(src)
@@ -171,6 +178,7 @@ Works together with spawning an observer, noted above.
 
 // Direct copied from medical HUD glasses proc, used to determine what health bar to put over the targets head.
 /mob/dead/proc/RoundHealth(var/health)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/dead/proc/RoundHealth() called tick#: [world.time]")
 	switch(health)
 		if(100 to INFINITY)
 			return "health100"
@@ -196,6 +204,7 @@ Works together with spawning an observer, noted above.
 // Pretty much a direct copy of Medical HUD stuff, except will show ill if they are ill instead of also checking for known illnesses.
 
 /mob/dead/proc/process_medHUD(var/mob/M)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/dead/proc/process_medHUD() called tick#: [world.time]")
 	var/client/C = M.client
 	var/image/holder
 	for(var/mob/living/carbon/human/patient in oview(M))
@@ -231,6 +240,7 @@ Works together with spawning an observer, noted above.
 			C.images += holder
 
 /mob/dead/proc/assess_targets(list/target_list, mob/dead/observer/U)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/dead/proc/assess_targets() called tick#: [world.time]")
 	var/icon/tempHud = 'icons/mob/hud.dmi'
 	for(var/mob/living/target in target_list)
 		if(iscarbon(target))
@@ -267,6 +277,7 @@ Works together with spawning an observer, noted above.
 	return 1
 
 /mob/proc/ghostize(var/flags = GHOST_CAN_REENTER)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/proc/ghostize() called tick#: [world.time]")
 	if(key)
 		var/mob/dead/observer/ghost = new(src, flags)	//Transfer safety to observer spawning proc.
 		ghost.timeofdeath = src.timeofdeath //BS12 EDIT
@@ -282,6 +293,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set category = "OOC"
 	set name = "Ghost"
 	set desc = "Relinquish your life and enter the land of the dead."
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/living/verb/ghost()  called tick#: [world.time]")
 
 	if(stat == DEAD)
 		ghostize(1)
@@ -298,6 +310,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 // Check for last poltergeist activity.
 /mob/dead/observer/proc/can_poltergeist(var/start_cooldown=1)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/dead/observer/proc/can_poltergeist() called tick#: [world.time]")
 	if(world.time >= next_poltergeist)
 		if(start_cooldown)
 			start_poltergeist_cooldown()
@@ -305,9 +318,11 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	return 0
 
 /mob/dead/observer/proc/start_poltergeist_cooldown()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/dead/observer/proc/start_poltergeist_cooldown() called tick#: [world.time]")
 	next_poltergeist=world.time + POLTERGEIST_COOLDOWN
 
 /mob/dead/observer/proc/reset_poltergeist_cooldown()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/dead/observer/proc/reset_poltergeist_cooldown() called tick#: [world.time]")
 	next_poltergeist=0
 
 /* WHY
@@ -364,6 +379,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 /mob/dead/observer/verb/reenter_corpse()
 	set category = "Ghost"
 	set name = "Re-enter Corpse"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/reenter_corpse()  called tick#: [world.time]")
 	if(!client)	return
 	if(!(mind && mind.current && can_reenter_corpse))
 		src << "<span class='warning'>You have no body.</span>"
@@ -387,6 +403,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set category = "Ghost"
 	set name = "Toggle MedicHUD"
 	set desc = "Toggles Medical HUD allowing you to see how everyone is doing"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/toggle_medHUD()  called tick#: [world.time]")
 	if(!client)
 		return
 	if(medHUD)
@@ -400,6 +417,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set category = "Ghost"
 	set name = "Toggle AntagHUD"
 	set desc = "Toggles AntagHUD allowing you to see who is the antagonist"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/toggle_antagHUD()  called tick#: [world.time]")
 	if(!config.antag_hud_allowed && !client.holder)
 		src << "<span class='warning'>Admins have disabled this for this round.</span>"
 		return
@@ -426,6 +444,8 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set category = "Ghost"
 	set name = "Teleport"
 	set desc= "Teleport to a location"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/dead/observer/proc/dead_tele() called tick#: [world.time]")
+
 	if(!istype(usr, /mob/dead/observer))
 		usr << "Not when you're not dead!"
 		return
@@ -466,6 +486,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set category = "Ghost"
 	set name = "Follow" // "Haunt"
 	set desc = "Follow and haunt a mob."
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/follow()  called tick#: [world.time]")
 
 	var/list/mobs = getmobs()
 	var/input = input("Please, select a mob!", "Haunt", null, null) as null|anything in mobs
@@ -474,6 +495,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 // This is the ghost's follow verb with an argument
 /mob/dead/observer/proc/ManualFollow(var/atom/movable/target)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/dead/observer/proc/ManualFollow() called tick#: [world.time]")
 	if(target)
 		var/turf/targetloc = get_turf(target)
 		var/area/targetarea = get_area(target)
@@ -506,6 +528,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set category = "Ghost"
 	set name = "Jump to Mob"
 	set desc = "Teleport to a mob"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/jumptomob()  called tick#: [world.time]")
 
 	if(istype(usr, /mob/dead/observer)) //Make sure they're an observer!
 
@@ -538,6 +561,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 /* Now a spell.  See spells.dm
 /mob/dead/observer/verb/boo()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/boo()  called tick#: [world.time]")
 	set category = "Ghost"
 	set name = "Boo!"
 	set desc= "Scare your crew members because of boredom!"
@@ -562,6 +586,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 /mob/dead/observer/verb/analyze_air()
 	set name = "Analyze Air"
 	set category = "Ghost"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/analyze_air()  called tick#: [world.time]")
 
 	if(!istype(usr, /mob/dead/observer)) return
 
@@ -614,6 +639,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 /mob/dead/observer/verb/toggle_darkness()
 	set name = "Toggle Darkness"
 	set category = "Ghost"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/toggle_darkness()  called tick#: [world.time]")
 
 	if (see_invisible == SEE_INVISIBLE_OBSERVER_NOLIGHTING)
 		see_invisible = SEE_INVISIBLE_OBSERVER
@@ -623,6 +649,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 /mob/dead/observer/verb/become_mouse()
 	set name = "Become mouse"
 	set category = "Ghost"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/become_mouse()  called tick#: [world.time]")
 
 	if(!config.respawn_as_mouse)
 		src << "<span class='warning'>Respawning as mouse is disabled..</span>"
@@ -662,6 +689,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set name = "View Crew Manifest"
 	set category = "Ghost"
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/view_manfiest()  called tick#: [world.time]")
 	var/dat
 	dat += "<h4>Crew Manifest</h4>"
 	dat += data_core.get_manifest()
@@ -670,10 +698,10 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 //Used for drawing on walls with blood puddles as a spooky ghost.
 /mob/dead/verb/bloody_doodle()
-
 	set category = "Ghost"
 	set name = "Write in blood"
 	set desc = "If the round is sufficiently spooky, write a short message in blood on the floor or a wall. Remember, no IC in OOC or OOC in IC."
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/verb/bloody_doodle()  called tick#: [world.time]")
 
 	if(!(config.cult_ghostwriter))
 		src << "<span class='warning'>That verb is not currently permitted.</span>"
@@ -751,6 +779,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set name = "Become MoMMI"
 	set category = "Ghost"
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/become_mommi()  called tick#: [world.time]")
 	if(!config.respawn_as_mommi)
 		src << "<span class='warning'>Respawning as MoMMI is disabled..</span>"
 		return
@@ -792,6 +821,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	set name = "Search For Arenas"
 	set desc = "Try to find an Arena to polish your robust bomb placement skills.."
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/dead/observer/verb/find_arena()  called tick#: [world.time]")
 	if(!arenas.len)
 		usr << "There are no arenas in the world! Ask the admins to spawn one."
 		return

@@ -53,10 +53,12 @@
 
 	var/list/icon/pipes_shown = list()
 	var/last_played_vent
+	var/is_ventcrawling = 0
 
 	//
 	var/list/callOnLife = list() //
 
 /mob/living/proc/unsubLife(datum/sub)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/unsubLife() called tick#: [world.time]")
 	while("\ref[sub]" in callOnLife)
 		callOnLife -= "\ref[sub]"

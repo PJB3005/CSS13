@@ -13,16 +13,17 @@
 // Use this when setting the aiEye's location.
 // It will also stream the chunk that the new loc is in.
 
-/mob/camera/aiEye/setLoc(var/T)
-
+/mob/camera/aiEye/forceMove(var/atom/destination)
 	if(ai)
 		if(!isturf(ai.loc))
 			return
-		T = get_turf(T)
-		loc = T
+
+		forceEnter(destination)
+
 		cameranet.visibility(src)
 		if(ai.client)
 			ai.client.eye = src
+
 		//Holopad
 		if(istype(ai.current, /obj/machinery/hologram/holopad))
 			var/obj/machinery/hologram/holopad/H = ai.current
@@ -57,13 +58,14 @@
 	..()
 
 /atom/proc/move_camera_by_click()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/atom/proc/move_camera_by_click() called tick#: [world.time]")
 	if(istype(usr, /mob/living/silicon/ai))
 		var/mob/living/silicon/ai/AI = usr
 		if(AI.eyeobj && AI.client.eye == AI.eyeobj)
 			AI.cameraFollow = null
-			//AI.eyeobj.setLoc(src)
+			//AI.eyeobj.forceMove(src)
 			if (isturf(src.loc) || isturf(src))
-				AI.eyeobj.setLoc(src)
+				AI.eyeobj.forceMove(src)
 
 /mob/living/Click()
 	if(isAI(usr))
@@ -82,6 +84,8 @@
 
 /client/proc/AIMove(n, direct, var/mob/living/silicon/ai/user)
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/client/proc/AIMove() called tick#: [world.time]")
+
 	var/initial = initial(user.sprint)
 	var/max_sprint = 50
 
@@ -91,7 +95,7 @@
 	for(var/i = 0; i < max(user.sprint, initial); i += 20)
 		var/turf/step = get_turf(get_step(user.eyeobj, direct))
 		if(step)
-			user.eyeobj.setLoc(step)
+			user.eyeobj.forceMove(step)
 
 	user.cooldown = world.timeofday + 5
 	if(user.acceleration)
@@ -107,6 +111,8 @@
 		user.light_cameras()
 
 /mob/living/silicon/ai/proc/view_core()
+
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/silicon/ai/proc/view_core() called tick#: [world.time]")
 
 	current = null
 	cameraFollow = null
@@ -128,6 +134,7 @@
 /mob/living/silicon/ai/verb/toggle_acceleration()
 	set category = "AI Commands"
 	set name = "Toggle Camera Acceleration"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/mob/living/silicon/ai/verb/toggle_acceleration()  called tick#: [world.time]")
 
 	acceleration = !acceleration
 	usr << "Camera acceleration has been toggled [acceleration ? "on" : "off"]."

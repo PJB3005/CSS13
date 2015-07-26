@@ -56,6 +56,7 @@
 	explosion_block = 1
 
 	emag_cost = 1 // in MJ
+	machine_flags = SCREWTOGGLE | WIREJACK
 
 /obj/machinery/door/airlock/Destroy()
 	if(wires)
@@ -232,6 +233,7 @@
 	..()
 
 /obj/machinery/door/airlock/uranium/proc/radiate()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/uranium/proc/radiate() called tick#: [world.time]")
 	for(var/mob/living/L in range (3,src))
 		L.apply_effect(15,IRRADIATE,0)
 	return
@@ -249,6 +251,7 @@
 	PlasmaBurn(temperature)
 
 /obj/machinery/door/airlock/plasma/proc/PlasmaBurn(temperature)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/plasma/proc/PlasmaBurn() called tick#: [world.time]")
 	for(var/turf/simulated/floor/target_tile in range(2,loc))
 //		if(target_tile.parent && target_tile.parent.group_processing) // THESE PROBABLY DO SOMETHING IMPORTANT BUT I DON'T KNOW HOW TO FIX IT - Erthilo
 //			target_tile.parent.suspend_group_processing()
@@ -346,29 +349,35 @@ About the new airlock wires panel:
 	..(user)
 
 /obj/machinery/door/airlock/proc/isElectrified()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/isElectrified() called tick#: [world.time]")
 	if(src.secondsElectrified != 0)
 		return 1
 	return 0
 
 /obj/machinery/door/airlock/proc/isWireCut(var/wireIndex)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/isWireCut() called tick#: [world.time]")
 	// You can find the wires in the datum folder.
 	if(!wires)
 		return 1
 	return wires.IsIndexCut(wireIndex)
 
 /obj/machinery/door/airlock/proc/canAIControl()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/canAIControl() called tick#: [world.time]")
 	return ((src.aiControlDisabled!=1) && (!src.isAllPowerCut()));
 
 /obj/machinery/door/airlock/proc/canAIHack()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/canAIHack() called tick#: [world.time]")
 	return ((src.aiControlDisabled==1) && (!hackProof) && (!src.isAllPowerCut()));
 
 /obj/machinery/door/airlock/proc/arePowerSystemsOn()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/arePowerSystemsOn() called tick#: [world.time]")
 	return (src.secondsMainPowerLost==0 || src.secondsBackupPowerLost==0)
 
 /obj/machinery/door/airlock/requiresID()
 	return !(src.isWireCut(AIRLOCK_WIRE_IDSCAN) || aiDisabledIdScanner)
 
 /obj/machinery/door/airlock/proc/isAllPowerCut()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/isAllPowerCut() called tick#: [world.time]")
 	var/retval=0
 	if(src.isWireCut(AIRLOCK_WIRE_MAIN_POWER1) || src.isWireCut(AIRLOCK_WIRE_MAIN_POWER2))
 		if(src.isWireCut(AIRLOCK_WIRE_BACKUP_POWER1) || src.isWireCut(AIRLOCK_WIRE_BACKUP_POWER2))
@@ -376,10 +385,12 @@ About the new airlock wires panel:
 	return retval
 
 /obj/machinery/door/airlock/proc/regainMainPower()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/regainMainPower() called tick#: [world.time]")
 	if(src.secondsMainPowerLost > 0)
 		src.secondsMainPowerLost = 0
 
 /obj/machinery/door/airlock/proc/loseMainPower()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/loseMainPower() called tick#: [world.time]")
 	if(src.secondsMainPowerLost <= 0)
 		src.secondsMainPowerLost = 60
 		if(src.secondsBackupPowerLost < 10)
@@ -406,10 +417,12 @@ About the new airlock wires panel:
 			src.updateDialog()
 
 /obj/machinery/door/airlock/proc/loseBackupPower()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/loseBackupPower() called tick#: [world.time]")
 	if(src.secondsBackupPowerLost < 60)
 		src.secondsBackupPowerLost = 60
 
 /obj/machinery/door/airlock/proc/regainBackupPower()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/regainBackupPower() called tick#: [world.time]")
 	if(src.secondsBackupPowerLost > 0)
 		src.secondsBackupPowerLost = 0
 
@@ -489,7 +502,7 @@ About the new airlock wires panel:
 			else
 				user << "Airlock AI control has been blocked with a firewall. Unable to hack."
 
-	//Separate interface for the AI.
+	//separate interface for the AI.
 	user.set_machine(src)
 	var/t1 = text("<B>Airlock Control</B><br>\n")
 	if(src.secondsMainPowerLost > 0)
@@ -590,6 +603,7 @@ About the new airlock wires panel:
 
 
 /obj/machinery/door/airlock/proc/hack(mob/user as mob)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/hack() called tick#: [world.time]")
 	if(src.aiHacking==0)
 		src.aiHacking=1
 		spawn(20)
@@ -650,11 +664,12 @@ About the new airlock wires panel:
 /obj/machinery/door/airlock/Topic(href, href_list, var/nowindow = 0)
 	// If you add an if(..()) check you must first remove the var/nowindow parameter.
 	// Otherwise it will runtime with this kind of error: null.Topic()
-	if(!isAI(usr) && usr.z != z) return 1
+	var/turf/T = get_turf(usr)
+	if(!isAI(usr) && T.z != z) return 1
 	if(!nowindow)
 		..()
 	if(!isAdminGhost(usr))
-		if(usr.stat || usr.restrained()|| usr.small)
+		if(usr.stat || usr.restrained() || usr.small)
 			//testing("Returning: Not adminghost, stat=[usr.stat], restrained=[usr.restrained()], small=[usr.small]")
 			return
 	add_fingerprint(usr)
@@ -739,6 +754,7 @@ About the new airlock wires panel:
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						src.locked = 1
+						log_attack("<font color='red'>[usr] ([usr.ckey]) bolted the [name] at [x] [y] [z]</font>")
 						update_icon()
 				if(5)
 					//un-electrify door
@@ -749,11 +765,13 @@ About the new airlock wires panel:
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						src.secondsElectrified = 0
+						log_attack("<font color='red'>[usr] ([usr.ckey]) un-electrified the [name] at [x] [y] [z]</font>")
 					else if(src.secondsElectrified>0)
 						if(isobserver(usr) && !canGhostWrite(usr,src,"electrified"))
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						src.secondsElectrified = 0
+						log_attack("<font color='red'>[usr] ([usr.ckey]) un-electrified the [name] at [x] [y] [z]</font>")
 
 				if(8)
 					// Safeties!  We don't need no stinking safeties!
@@ -764,6 +782,7 @@ About the new airlock wires panel:
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						safe = 0
+						log_attack("<font color='red'>[usr] ([usr.ckey]) removed the safeties on the [name] at [x] [y] [z]</font>")
 					else
 						usr << text("Firmware reports safeties already overriden.")
 
@@ -778,6 +797,7 @@ About the new airlock wires panel:
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						normalspeed = 0
+						log_attack("<font color='red'>[usr] ([usr.ckey]) disrupted door timing on the [name] at [x] [y] [z]</font>")
 					else
 						usr << text("Door timing circurity already accellerated.")
 
@@ -792,11 +812,13 @@ About the new airlock wires panel:
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						close()
+						log_attack("<font color='red'>[usr] ([usr.ckey]) closed the [name] at [x] [y] [z]</font>")
 					else
 						if(isobserver(usr) && !canGhostWrite(usr,src,"opened"))
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						open()
+						log_attack("<font color='red'>[usr] ([usr.ckey]) opened the [name] at [x] [y] [z]</font>")
 
 				if(10)
 					// Bolt lights
@@ -853,6 +875,7 @@ About the new airlock wires panel:
 					else
 						shockedby += text("\[[time_stamp()]\][usr](ckey:[usr.ckey])")
 						usr.attack_log += text("\[[time_stamp()]\] <font color='red'>Electrified the [name] at [x] [y] [z]</font>")
+						log_attack("<font color='red'>[usr] ([usr.ckey]) Temporarily electrified the [name] at [x] [y] [z]</font>")
 						if(isobserver(usr) && !canGhostWrite(usr,src,"electrified (30sec)"))
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
@@ -875,6 +898,7 @@ About the new airlock wires panel:
 					else
 						shockedby += text("\[[time_stamp()]\][usr](ckey:[usr.ckey])")
 						usr.attack_log += text("\[[time_stamp()]\] <font color='red'>Electrified the [name] at [x] [y] [z]</font>")
+						log_attack("<font color='red'>[usr] ([usr.ckey]) Electrified the [name] at [x] [y] [z]</font>")
 						if(isobserver(usr) && !canGhostWrite(usr,src,"electrified (permanent)"))
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
@@ -917,11 +941,13 @@ About the new airlock wires panel:
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						open()
+						log_attack("<font color='red'>[usr] ([usr.ckey]) opened the [name] at [x] [y] [z]</font>")
 					else
 						if(isobserver(usr) && !canGhostWrite(usr,src,"closed"))
 							usr << "<span class='warning'>Nope.</span>"
 							return 0
 						close()
+						log_attack("<font color='red'>[usr] ([usr.ckey]) closed the [name] at [x] [y] [z]</font>")
 
 				if(10)
 					// Bolt lights
@@ -1035,12 +1061,6 @@ About the new airlock wires panel:
 			wires.Interact(user)
 			update_multitool_menu(user)
 		attack_hand(user)
-	// TODO: review this if
-	else if (istype(I, /obj/item/weapon/pai_cable))
-		if (!operating)
-			var/obj/item/weapon/pai_cable/PC = I
-			PC.plugin(src, user)
-			PC = null
 	else if(istype(I, /obj/item/weapon/crowbar) || istype(I, /obj/item/weapon/fireaxe) )
 		if(src.busy) return
 		src.busy = 1
@@ -1096,6 +1116,7 @@ About the new airlock wires panel:
 	return
 
 /obj/machinery/door/airlock/proc/revert(mob/user as mob, var/direction)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/revert() called tick#: [world.time]")
 	var/obj/structure/door_assembly/DA = new assembly_type(loc)
 	DA.anchored = 1
 	DA.fingerprints += src.fingerprints
@@ -1226,7 +1247,14 @@ About the new airlock wires panel:
 					break
 
 /obj/machinery/door/airlock/proc/prison_open()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/prison_open() called tick#: [world.time]")
 	locked = 0
 	open()
 	locked = 1
 	return
+
+/obj/machinery/door/airlock/wirejack(var/mob/living/silicon/pai/P)
+	if(..())
+		attack_ai(P)
+		return 1
+	return 0

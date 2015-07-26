@@ -20,7 +20,8 @@
 	if(!ishuman(user) && (!isrobot(user) || isMoMMI(user))) //Non-humans can't use it, borgs can, mommis can't
 		user << "<span class='warning'>You don't know how to use this!</span>"
 		return
-	if(ishuman(user) && (user:miming || user:silent)) //Humans get their muteness checked
+	var/mob/living/carbon/human/H = user
+	if(istype(H) && (H.miming || H.silent)) //Humans get their muteness checked
 		user << "<span class='warning'>You find yourself unable to speak at all.</span>"
 		return
 	if(spamcheck)
@@ -95,6 +96,7 @@ This is to cycle sounds forward
 /obj/item/device/soundsynth/verb/CycleForward()
 	set category = "Object"
 	set name = "Cycle Sound Forward"
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/obj/item/device/soundsynth/verb/CycleForward()  called tick#: [world.time]")
 	switch(sound_flag)
 		if(SOUND_NUM)
 			usr << "There is no sound higher then Double Beep!"
@@ -114,6 +116,7 @@ And backwards
 	set category = "Object"
 	set name = "Cycle Sound Backward"
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/obj/item/device/soundsynth/verb/CycleBackward()  called tick#: [world.time]")
 	switch(sound_flag)
 		if(0)
 			usr << "There is no sound lower then Honk!"

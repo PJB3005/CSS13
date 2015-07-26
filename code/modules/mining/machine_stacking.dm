@@ -73,10 +73,11 @@
 		return 1
 
 /obj/machinery/computer/stacking_unit/proc/send_signal(var/list/data)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/stacking_unit/proc/send_signal() called tick#: [world.time]")
 	if(!radio_connection)
 		return
 
-	var/datum/signal/signal = new
+	var/datum/signal/signal = getFromDPool(/datum/signal)
 	signal.source = src
 	signal.transmission_method = 1 //radio signal
 	signal.data["tag"] = stacker_tag
@@ -89,6 +90,7 @@
 		set_frequency(frequency)
 
 /obj/machinery/computer/stacking_unit/proc/set_frequency(var/new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/stacking_unit/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	frequency = new_frequency
 	radio_connection = radio_controller.add_object(src, frequency)
@@ -106,12 +108,13 @@
 /obj/machinery/computer/stacking_unit/multitool_menu(var/mob/user, var/obj/item/device/multitool/P)
 	return {"
 		<ul>
-			<li><b>Frequency: </b><a href='?src=\ref[src];set_frequency=-1'>[format_frequency(frequency)]</a></li>
+			<li><b>Frequency: </b><a href='?src=\ref[src];set_freq=-1'>[format_frequency(frequency)]</a></li>
 			<li>[format_tag("Stacker ID Tag","stacker_tag")]</li>
 		</ul>
 	"}
 
 /obj/machinery/computer/stacking_unit/proc/request_status()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/stacking_unit/proc/request_status() called tick#: [world.time]")
 	stacker_data = null
 	send_signal(list("sigtype" = "status"))
 
@@ -227,6 +230,7 @@
 	broadcast_status()
 
 /obj/machinery/mineral/stacking_machine/proc/release_stack(var/typepath, var/forced = 0)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/mineral/stacking_machine/proc/release_stack() called tick#: [world.time]")
 	if(!(typepath in stacks)) //What, we don't even have this stack
 		return
 
@@ -249,10 +253,11 @@
 		returnToPool(stack)
 
 /obj/machinery/mineral/stacking_machine/proc/send_signal(list/data)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/mineral/stacking_machine/proc/send_signal() called tick#: [world.time]")
 	if(!radio_connection)
 		return
 
-	var/datum/signal/signal = new
+	var/datum/signal/signal = getFromDPool(/datum/signal)
 	signal.source = src
 	signal.transmission_method = 1 //radio signal
 	signal.data["tag"] = id_tag
@@ -261,6 +266,7 @@
 	radio_connection.post_signal(src, signal)
 
 /obj/machinery/mineral/stacking_machine/proc/broadcast_status()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/mineral/stacking_machine/proc/broadcast_status() called tick#: [world.time]")
 	var/list/data = list()
 	var/list/stack_data[stacks.len]
 
@@ -281,6 +287,7 @@
 		set_frequency(frequency)
 
 /obj/machinery/mineral/stacking_machine/proc/set_frequency(var/new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/mineral/stacking_machine/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	frequency = new_frequency
 	radio_connection = radio_controller.add_object(src, frequency)
@@ -300,7 +307,7 @@
 /obj/machinery/mineral/stacking_machine/multitool_menu(var/mob/user, var/obj/item/device/multitool/P)
 	return {"
 		<ul>
-			<li><b>Frequency: </b><a href='?src=\ref[src];set_frequency=-1'>[format_frequency(frequency)]</a></li>
+			<li><b>Frequency: </b><a href='?src=\ref[src];set_freq=-1'>[format_frequency(frequency)]</a></li>
 			<li>[format_tag("ID Tag","id_tag")]</li>
 			<li><b>Input: </b><a href='?src=\ref[src];changedir=1'>[capitalize(dir2text(in_dir))]</a></li>
 			<li><b>Output: </b><a href='?src=\ref[src];changedir=2'>[capitalize(dir2text(out_dir))]</a></li>

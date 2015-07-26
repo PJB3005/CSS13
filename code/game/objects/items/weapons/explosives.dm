@@ -93,6 +93,8 @@
 
 /obj/item/weapon/plastique/proc/explode(var/location)
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/weapon/plastique/proc/explode() called tick#: [world.time]")
+
 	if(!target)
 		target = get_atom_on_turf(src)
 	if(!target)
@@ -101,8 +103,8 @@
 		explosion(location, -1, -1, 2, 3)
 
 	if(target)
+		target.overlays -= image('icons/obj/assemblies.dmi', "plastic-explosive2")
 		if(!(target.singuloCanEat()))//mostly adminbus objects. It'd make sense though that C4 can't destroy what even a singulo can't eat.
-			target.overlays -= image('icons/obj/assemblies.dmi', "plastic-explosive2")
 			del(src)
 			return
 		if (istype(target, /turf/simulated/wall))

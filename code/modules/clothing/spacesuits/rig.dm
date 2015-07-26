@@ -37,6 +37,8 @@
 //Minimizes snowflake coding and allows dynamically disabling the helmet's light if needed
 /obj/item/clothing/head/helmet/space/rig/proc/check_light()
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/clothing/head/helmet/space/rig/proc/check_light() called tick#: [world.time]")
+
 	if(no_light) //There's no light on the helmet
 		if(on) //The helmet light is currently on
 			on = 0 //Force it off
@@ -46,6 +48,8 @@
 		action_button_name = initial(action_button_name) //Make sure we restore the action button
 
 /obj/item/clothing/head/helmet/space/rig/proc/update_brightness()
+
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/clothing/head/helmet/space/rig/proc/update_brightness() called tick#: [world.time]")
 
 	if(on)
 		set_light(brightness_on)

@@ -205,7 +205,7 @@
 /obj/machinery/shower/update_icon()	//this is terribly unreadable, but basically it makes the shower mist up
 	overlays.len = 0					//once it's been on for a while, in addition to handling the water overlay.
 	if(mymist)
-		del(mymist)
+		returnToPool(mymist)
 
 	if(on)
 		overlays += image('icons/obj/watercloset.dmi', src, "water", MOB_LAYER + 1, dir)
@@ -215,16 +215,16 @@
 			spawn(50)
 				if(src && on)
 					ismist = 1
-					mymist = new /obj/effect/mist(loc)
+					mymist = getFromPool(/obj/effect/mist,loc)
 		else
 			ismist = 1
-			mymist = new /obj/effect/mist(loc)
+			mymist = getFromPool(/obj/effect/mist,loc)
 	else if(ismist)
 		ismist = 1
-		mymist = new /obj/effect/mist(loc)
+		mymist = getFromPool(/obj/effect/mist,loc)
 		spawn(250)
 			if(src && !on)
-				del(mymist)
+				returnToPool(mymist)
 				ismist = 0
 
 /obj/machinery/shower/Crossed(atom/movable/O)
@@ -241,6 +241,7 @@
 
 //Yes, showers are super powerful as far as washing goes.
 /obj/machinery/shower/proc/wash(atom/movable/O as obj|mob)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/shower/proc/wash() called tick#: [world.time]")
 	if(!on) return
 
 	if(iscarbon(O))
@@ -332,6 +333,7 @@
 
 
 /obj/machinery/shower/proc/check_heat(mob/M as mob)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/shower/proc/check_heat() called tick#: [world.time]")
 	if(!on || watertemp == "normal") return
 	if(iscarbon(M))
 		var/mob/living/carbon/C = M

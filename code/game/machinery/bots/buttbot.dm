@@ -21,6 +21,7 @@ Here it is: Buttbot.
 	maxhealth = 25
 	var/buttchance = 80 //Like an 80% chance of it working. It's just a butt with an arm in it.
 	var/sincelastfart = 0
+	flags = HEAR
 
 /obj/machinery/bot/buttbot/attack_hand(mob/living/user as mob)
 	. = ..()
@@ -35,6 +36,7 @@ Here it is: Buttbot.
 
 
 /obj/machinery/bot/buttbot/proc/speak(var/message)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/bot/buttbot/proc/speak() called tick#: [world.time]")
 	if((!src.on) || (!message))
 		return
 	for(var/mob/O in hearers(src, null))
@@ -43,7 +45,7 @@ Here it is: Buttbot.
 
 
 /obj/machinery/bot/buttbot/Hear(message, atom/movable/speaker, var/datum/language/speaking, raw_message, radio_freq)
-	if(prob(buttchance))
+	if(prob(buttchance) && !findtext(message,"butt"))
 		message = strip_html_properly(html_decode(raw_message))
 
 		var/list/split_phrase = text2list(message," ") //Split it up into words.

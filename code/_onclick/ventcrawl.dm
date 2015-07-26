@@ -36,14 +36,18 @@ var/list/ventcrawl_machinery = list(/obj/machinery/atmospherics/unary/vent_pump,
 		return
 	..(A)
 
-/mob/living/carbon/alien/AltClickOn(var/atom/A)
-	if(is_type_in_list(A,ventcrawl_machinery))
+/mob/living/carbon/alien/AltClickOn(var/atom/A, var/ignore = 0)
+	if(is_type_in_list(A,ventcrawl_machinery) && !ignore)
 		src.handle_ventcrawl(A)
 		return
 	..(A)
 
+/mob/living/carbon/alien/humanoid/queen/AltClickOn(var/atom/A)
+	..(A,1)
+
 
 /mob/living/proc/handle_ventcrawl(var/atom/clicked_on) // -- TLE -- Merged by Carn
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/handle_ventcrawl() called tick#: [world.time]")
 	diary << "[src] is ventcrawling."
 	if(!stat)
 		if(!lying)
@@ -128,6 +132,8 @@ var/list/ventcrawl_machinery = list(/obj/machinery/atmospherics/unary/vent_pump,
 	return
 
 /mob/living/proc/add_ventcrawl(obj/machinery/atmospherics/starting_machine)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/add_ventcrawl() called tick#: [world.time]")
+	is_ventcrawling = 1
 	var/datum/pipe_network/network = starting_machine.return_network(starting_machine)
 	if(!network)
 		return
@@ -139,6 +145,8 @@ var/list/ventcrawl_machinery = list(/obj/machinery/atmospherics/unary/vent_pump,
 			client.images += A.pipe_image
 
 /mob/living/proc/remove_ventcrawl()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/remove_ventcrawl() called tick#: [world.time]")
+	is_ventcrawling = 0
 	if(client)
 		for(var/image/current_image in pipes_shown)
 			client.images -= current_image

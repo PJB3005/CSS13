@@ -60,7 +60,7 @@
 
 /obj/machinery/air_sensor/process()
 	if(on)
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.transmission_method = 1 //radio signal
 		signal.data["tag"] = id_tag
 		signal.data["timestamp"] = world.time
@@ -94,6 +94,7 @@
 		radio_connection.post_signal(src, signal, filter = RADIO_ATMOSIA)
 
 /obj/machinery/air_sensor/proc/set_frequency(new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/air_sensor/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	frequency = new_frequency
 	radio_connection = radio_controller.add_object(src, frequency, RADIO_ATMOSIA)
@@ -148,6 +149,7 @@
 
 
 /obj/machinery/computer/general_air_control/proc/return_text()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/general_air_control/proc/return_text() called tick#: [world.time]")
 	var/sensor_data
 	if(sensors.len)
 		for(var/id_tag in sensors)
@@ -230,6 +232,7 @@ font-weight:bold;
 	return output
 
 /obj/machinery/computer/general_air_control/proc/set_frequency(new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/general_air_control/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	frequency = new_frequency
 	radio_connection = radio_controller.add_object(src, frequency, RADIO_ATMOSIA)
@@ -486,10 +489,12 @@ font-weight:bold;
 		..(signal)
 
 /obj/machinery/computer/general_air_control/large_tank_control/proc/request_device_refresh(var/device)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/general_air_control/large_tank_control/proc/request_device_refresh() called tick#: [world.time]")
 	send_signal(list("tag"=device, "status"))
 
 /obj/machinery/computer/general_air_control/large_tank_control/proc/send_signal(var/list/data)
-	var/datum/signal/signal = new
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/general_air_control/large_tank_control/proc/send_signal() called tick#: [world.time]")
+	var/datum/signal/signal = getFromDPool(/datum/signal)
 	signal.transmission_method = 1 //radio signal
 	signal.source = src
 	signal.data=data
@@ -511,7 +516,7 @@ font-weight:bold;
 
 	if(!radio_connection)
 		return 0
-	var/datum/signal/signal = new
+	var/datum/signal/signal = getFromDPool(/datum/signal)
 	signal.transmission_method = 1 //radio signal
 	signal.source = src
 	if(href_list["in_refresh_status"])
@@ -577,7 +582,7 @@ font-weight:bold;
 				if(data["temperature"] <= on_temperature)
 					injecting = 1
 
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.transmission_method = 1 //radio signal
 		signal.source = src
 
@@ -614,7 +619,7 @@ font-weight:bold;
 		if(automation)
 
 			// AUTOFIXED BY fix_string_idiocy.py
-			// C:\Users\Rob\Documents\Projects\vgstation13\code\game\machinery\atmo_control.dm:372: output += "Automated Fuel Injection: <A href='?src=\ref[src];toggle_automation=1'>Engaged</A><BR>"
+			// C:\Users\Rob\\documents\\\projects\vgstation13\code\game\\machinery\atmo_control.dm:372: output += "Automated Fuel Injection: <A href='?src=\ref[src];toggle_automation=1'>Engaged</A><BR>"
 			output += {"
 			<tr>
 				<td colspan="2">Injector Controls Locked Out</td>
@@ -623,7 +628,7 @@ font-weight:bold;
 		else
 
 			// AUTOFIXED BY fix_string_idiocy.py
-			// C:\Users\Rob\Documents\Projects\vgstation13\code\game\machinery\atmo_control.dm:375: output += "Automated Fuel Injection: <A href='?src=\ref[src];toggle_automation=1'>Disengaged</A><BR>"
+			// C:\Users\Rob\\documents\\\projects\vgstation13\code\game\\machinery\atmo_control.dm:375: output += "Automated Fuel Injection: <A href='?src=\ref[src];toggle_automation=1'>Disengaged</A><BR>"
 			output += {"
 			<tr>
 				<th>Injector:</th>
@@ -656,7 +661,7 @@ font-weight:bold;
 		if(!radio_connection)
 			return 0
 
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.transmission_method = 1 //radio signal
 		signal.source = src
 		signal.data = list(
@@ -675,7 +680,7 @@ font-weight:bold;
 		if(!radio_connection)
 			return 0
 
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.transmission_method = 1 //radio signal
 		signal.source = src
 		signal.data = list(
@@ -690,7 +695,7 @@ font-weight:bold;
 		if(!radio_connection)
 			return 0
 
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.transmission_method = 1 //radio signal
 		signal.source = src
 		signal.data = list(

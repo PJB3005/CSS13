@@ -20,7 +20,7 @@ var/list/camera_names=list()
 	var/obj/item/weapon/camera_assembly/assembly = null
 	var/light_on = 0
 
-	machine_flags = SCREWTOGGLE
+	machine_flags = SCREWTOGGLE //| WIREJACK Needs work
 
 	//OTHER
 
@@ -62,8 +62,11 @@ var/list/camera_names=list()
 	if(!c_tag)
 		name_camera()
 	..()
+	if(adv_camera && adv_camera.initialized && !(src in adv_camera.camerasbyzlevel["[z]"]))
+		adv_camera.update(z, 0, src, adding=1)
 
 /obj/machinery/camera/proc/name_camera()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/camera/proc/name_camera() called tick#: [world.time]")
 	var/area/A=get_area(src)
 	var/basename=A.name
 	var/nethash=english_list(network)
@@ -108,6 +111,7 @@ var/list/camera_names=list()
 				update_icon()
 				if(can_use())
 					cameranet.addCamera(src)
+					adv_camera.update(z, 0, src, adding=1)
 			for(var/mob/O in mob_list)
 				if (istype(O.machine, /obj/machinery/computer/security))
 					var/obj/machinery/computer/security/S = O.machine
@@ -130,6 +134,7 @@ var/list/camera_names=list()
 	return
 
 /obj/machinery/camera/proc/setViewRange(var/num = 7)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/camera/proc/setViewRange() called tick#: [world.time]")
 	src.view_range = num
 	cameranet.updateVisibility(src, 0)
 
@@ -241,7 +246,11 @@ var/list/camera_names=list()
 		..()
 	return
 
+/obj/machinery/camera/attack_pai(mob/user as mob)
+	wirejack(user)
+
 /obj/machinery/camera/proc/deactivate(user as mob, var/choice = 1)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/camera/proc/deactivate() called tick#: [world.time]")
 	if(choice==1)
 		status = !( src.status )
 		update_icon()
@@ -271,19 +280,30 @@ var/list/camera_names=list()
 				O.unset_machine()
 				O.reset_view(null)
 				O << "The screen bursts into static."
+	if(choice && can_use()) //camera reactivated
+		adv_camera.update(z, 0, src, adding=1)
+	else //either deactivated OR being destroyed
+		adv_camera.update(z, 0, src, adding=2)
 
 /obj/machinery/camera/proc/triggerCameraAlarm()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/camera/proc/triggerCameraAlarm() called tick#: [world.time]")
+	if(!alarm_on)
+		adv_camera.update(z, 0, src, adding=4) //1 is alarming, 0 is nothing wrong
 	alarm_on = 1
 	for(var/mob/living/silicon/S in mob_list)
 		S.triggerAlarm("Camera", areaMaster, list(src), src)
 
 
 /obj/machinery/camera/proc/cancelCameraAlarm()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/camera/proc/cancelCameraAlarm() called tick#: [world.time]")
+	if(alarm_on)
+		adv_camera.update(z, 0, src, adding=4) //1 is alarming, 0 is nothing wrong
 	alarm_on = 0
 	for(var/mob/living/silicon/S in mob_list)
 		S.cancelAlarm("Camera", areaMaster, list(src), src)
 
 /obj/machinery/camera/proc/can_use()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/camera/proc/can_use() called tick#: [world.time]")
 	if(!status)
 		return 0
 	if(stat & EMPED)
@@ -291,6 +311,7 @@ var/list/camera_names=list()
 	return 1
 
 /obj/machinery/camera/proc/can_see()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/camera/proc/can_see() called tick#: [world.time]")
 	var/list/see = null
 	var/turf/pos = get_turf(src)
 	if(isXRay())
@@ -300,6 +321,7 @@ var/list/camera_names=list()
 	return see
 
 /atom/proc/auto_turn()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/atom/proc/auto_turn() called tick#: [world.time]")
 	//Automatically turns based on nearby walls.
 	var/turf/simulated/wall/T = null
 
@@ -313,6 +335,7 @@ var/list/camera_names=list()
 //Return a working camera that can see a given mob
 //or null if none
 /proc/seen_by_camera(var/mob/M)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/seen_by_camera() called tick#: [world.time]")
 	for(var/obj/machinery/camera/C in oview(4, M))
 		if(C.can_use())	// check if camera disabled
 			return C
@@ -320,6 +343,8 @@ var/list/camera_names=list()
 	return null
 
 /proc/near_range_camera(var/mob/M)
+
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/near_range_camera() called tick#: [world.time]")
 
 	for(var/obj/machinery/camera/C in range(4, M))
 		if(C.can_use())	// check if camera disabled
@@ -329,6 +354,8 @@ var/list/camera_names=list()
 	return null
 
 /obj/machinery/camera/proc/weld(var/obj/item/weapon/weldingtool/WT, var/mob/user)
+
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/camera/proc/weld() called tick#: [world.time]")
 
 	if(busy)
 		return 0
@@ -348,3 +375,10 @@ var/list/camera_names=list()
 	busy = 0
 	return 0
 
+/obj/machinery/camera/wirejack(var/mob/living/silicon/pai/P)
+	if(..())
+		P.set_machine(P)
+		P.current = src
+		P.reset_view(src)
+		return 1
+	return 0

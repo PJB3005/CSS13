@@ -11,6 +11,7 @@
 	2 - fullblock
 */
 /mob/living/proc/run_armor_check(var/def_zone = null, var/attack_flag = "melee", var/absorb_text = null, var/soften_text = null)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/run_armor_check() called tick#: [world.time]")
 	var/armor = getarmor(def_zone, attack_flag)
 	var/absorb = 0
 	if(prob(armor))
@@ -33,6 +34,7 @@
 
 
 /mob/living/proc/getarmor(var/def_zone, var/type)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/getarmor() called tick#: [world.time]")
 	return 0
 
 
@@ -64,7 +66,7 @@
 			src.dust()
 	return absorb
 
-/mob/living/hitby(atom/movable/AM as mob|obj,var/speed = 5)//Standardization and logging -Sieve
+/mob/living/hitby(atom/movable/AM as mob|obj,var/speed = 5,var/dir)//Standardization and logging -Sieve
 	if(flags & INVULNERABLE)
 		return
 	if(istype(AM,/obj/))
@@ -79,47 +81,52 @@
 		if(armor < 2)
 			apply_damage(O.throwforce*(speed/5), dtype, zone, armor, O.is_sharp(), O)
 
+		// Begin BS12 momentum-transfer code.
+
+		var/client/assailant = directory[ckey(O.fingerprintslast)]
+		var/mob/M
+
+		if(assailant && assailant.mob && istype(assailant.mob,/mob))
+			M = assailant.mob
+
+		if(speed >= 20)
+			var/obj/item/weapon/W = O
+			var/momentum = speed/2
+
+			visible_message("<span class='warning'>[src] staggers under the impact!</span>","<span class='warning'>You stagger under the impact!</span>")
+			src.throw_at(get_edge_target_turf(src,dir),1,momentum)
+
+			if(istype(W.loc,/mob/living) && W.is_sharp()) //Projectile is embedded and suitable for pinning.
+
+				if(!istype(src,/mob/living/carbon/human)) //Handles embedding for non-humans and simple_animals.
+					O.loc = src
+					src.embedded += O
+
+				var/turf/T = near_wall(dir,2)
+
+				if(T)
+					src.loc = T
+					visible_message("<span class='warning'>[src] is pinned to the wall by [O]!</span>","<span class='warning'>You are pinned to the wall by [O]!</span>")
+					src.anchored = 1
+					src.pinned += O
+
+		//Log stuf!
+
 		if(!O.fingerprintslast)
 			return
 
-		var/client/assailant = directory[ckey(O.fingerprintslast)]
-		if(assailant && assailant.mob && istype(assailant.mob,/mob))
-			var/mob/M = assailant.mob
+		src.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been hit with a thrown [O], last touched by [M.name] ([assailant.ckey]) (speed: [speed])</font>")
+		M.attack_log += text("\[[time_stamp()]\] <font color='red'>Hit [src.name] ([src.ckey]) with a thrown [O] (speed: [speed])</font>")
+		msg_admin_attack("[src.name] ([src.ckey]) was hit by a thrown [O], last touched by [M.name] ([assailant.ckey]) (speed: [speed]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>)")
+		if(!iscarbon(M))
+			src.LAssailant = null
+		else
+			src.LAssailant = M
 
-			src.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been hit with a thrown [O], last touched by [M.name] ([assailant.ckey])</font>")
-			M.attack_log += text("\[[time_stamp()]\] <font color='red'>Hit [src.name] ([src.ckey]) with a thrown [O]</font>")
-			msg_admin_attack("[src.name] ([src.ckey]) was hit by a thrown [O], last touched by [M.name] ([assailant.ckey]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>)")
-			if(!iscarbon(M))
-				src.LAssailant = null
-			else
-				src.LAssailant = M
-
-			// Begin BS12 momentum-transfer code.
-
-			if(speed >= 20)
-				var/obj/item/weapon/W = O
-				var/momentum = speed/2
-				var/dir = get_dir(M,src)
-
-				visible_message("<span class='warning'>[src] staggers under the impact!</span>","<span class='warning'>You stagger under the impact!</span>")
-				src.throw_at(get_edge_target_turf(src,dir),1,momentum)
-
-				if(istype(W.loc,/mob/living) && W.is_sharp()) //Projectile is embedded and suitable for pinning.
-
-					if(!istype(src,/mob/living/carbon/human)) //Handles embedding for non-humans and simple_animals.
-						O.loc = src
-						src.embedded += O
-
-					var/turf/T = near_wall(dir,2)
-
-					if(T)
-						src.loc = T
-						visible_message("<span class='warning'>[src] is pinned to the wall by [O]!</span>","<span class='warning'>You are pinned to the wall by [O]!</span>")
-						src.anchored = 1
-						src.pinned += O
 
 
 /mob/living/proc/near_wall(var/direction,var/distance=1)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/near_wall() called tick#: [world.time]")
 	var/turf/T = get_step(get_turf(src),direction)
 	var/turf/last_turf = src.loc
 	var/i = 1
@@ -136,12 +143,14 @@
 // End BS12 momentum-transfer code.
 //Mobs on Fire
 /mob/living/proc/IgniteMob()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/IgniteMob() called tick#: [world.time]")
 	if(fire_stacks > 0 && !on_fire)
 		on_fire = 1
 		set_light(src.light_range + 3)
 		update_fire()
 
 /mob/living/proc/ExtinguishMob()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/ExtinguishMob() called tick#: [world.time]")
 	if(on_fire)
 		on_fire = 0
 		fire_stacks = 0
@@ -149,12 +158,15 @@
 		update_fire()
 
 /mob/living/proc/update_fire()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/update_fire() called tick#: [world.time]")
 	return
 
 /mob/living/proc/adjust_fire_stacks(add_fire_stacks) //Adjusting the amount of fire_stacks we have on person
+    //writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/adjust_fire_stacks() called tick#: [world.time]")
     fire_stacks = Clamp(fire_stacks + add_fire_stacks, -20, 20)
 
 /mob/living/proc/handle_fire()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/proc/handle_fire() called tick#: [world.time]")
 	if((flags & INVULNERABLE) && on_fire)
 		extinguish()
 	if(fire_stacks < 0)

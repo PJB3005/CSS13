@@ -37,6 +37,7 @@
 	list_recipes(user)
 
 /obj/item/stack/proc/list_recipes(mob/user as mob, recipes_sublist)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/stack/proc/list_recipes() called tick#: [world.time]")
 	ASSERT(isnum(amount))
 	if (!recipes)
 		return
@@ -111,7 +112,6 @@
 
 	if (href_list["make"])
 		if (src.amount < 1) returnToPool(src) //Never should happen
-		var/list/unanchored = list(/obj/structure/plasticflaps) //In the future, if you want anything to be made unanchored, add it here
 		var/list/recipes_list = recipes
 		if (href_list["sublist"])
 			var/datum/stack_recipe_list/srl = recipes_list[text2num(href_list["sublist"])]
@@ -139,7 +139,7 @@
 			return
 		var/atom/O = new R.result_type( usr.loc )
 		O.dir = usr.dir
-		if(is_type_in_list(O,unanchored))
+		if(R.start_unanchored)
 			var/obj/A = O
 			A.anchored = 0
 		if (R.max_res_amount>1)
@@ -171,6 +171,7 @@
 	return
 
 /obj/item/stack/proc/use(var/amount)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/stack/proc/use() called tick#: [world.time]")
 	ASSERT(isnum(src.amount))
 
 	if(src.amount>=amount)
@@ -201,6 +202,7 @@
 		spawn returnToPool(src)
 
 /obj/item/stack/proc/add_to_stacks(mob/usr as mob)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/stack/proc/add_to_stacks() called tick#: [world.time]")
 	for (var/obj/item/stack/item in usr.loc)
 		if (src == item)
 			continue
@@ -212,6 +214,7 @@
 		break
 
 /obj/item/stack/proc/can_stack_with(obj/item/other_stack)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/stack/proc/can_stack_with() called tick#: [world.time]")
 	return src.type == other_stack.type
 
 /obj/item/stack/attack_hand(mob/user as mob)
@@ -255,6 +258,7 @@
 	return ..()
 
 /obj/item/stack/proc/copy_evidences(obj/item/stack/from as obj)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/stack/proc/copy_evidences() called tick#: [world.time]")
 	src.blood_DNA = from.blood_DNA
 	src.fingerprints  = from.fingerprints
 	src.fingerprintshidden  = from.fingerprintshidden
@@ -273,7 +277,8 @@
 	var/time = 0
 	var/one_per_turf = 0
 	var/on_floor = 0
-	New(title, result_type, req_amount = 1, res_amount = 1, max_res_amount = 1, time = 0, one_per_turf = 0, on_floor = 0)
+	var/start_unanchored = 0
+	New(title, result_type, req_amount = 1, res_amount = 1, max_res_amount = 1, time = 0, one_per_turf = 0, on_floor = 0, start_unanchored = 0)
 		src.title = title
 		src.result_type = result_type
 		src.req_amount = req_amount
@@ -282,6 +287,7 @@
 		src.time = time
 		src.one_per_turf = one_per_turf
 		src.on_floor = on_floor
+		src.start_unanchored = start_unanchored
 
 /*
  * Recipe list datum
@@ -296,6 +302,7 @@
 		src.req_amount = req_amount
 
 /obj/item/stack/verb_pickup(mob/living/user)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/obj/item/stack/verb_pickup()  called tick#: [world.time]")
 	var/obj/item/I = user.get_active_hand()
 	if(I && can_stack_with(I))
 		I.preattack(src, user, 1)

@@ -22,7 +22,7 @@
 
 /obj/item/weapon/gun/dartgun
 	name = "dart gun"
-	desc = "A small gas-powered dartgun, capable of delivering chemical cocktails swiftly across short distances."
+	desc = "A small gas-powered dartgun, capable of delivering chemical cocktails swiftly across short distances. Dials allow you to specify how much of the loaded chemicals to fire at once."
 	icon_state = "dartgun-empty"
 	item_state = null
 	inhand_states = list("left_hand" = 'icons/mob/in-hand/left/guninhands_left.dmi', "right_hand" = 'icons/mob/in-hand/right/guninhands_right.dmi')
@@ -31,7 +31,7 @@
 	var/obj/item/weapon/dart_cartridge/cartridge = null //Container of darts.
 	var/max_beakers = 3
 	var/dart_reagent_amount = 15
-	var/container_type = /obj/item/weapon/reagent_containers/glass/beaker/vial
+	var/container_type = /obj/item/weapon/reagent_containers/glass/beaker
 	var/list/starting_chems = null
 
 /obj/item/weapon/gun/dartgun/update_icon()
@@ -94,7 +94,7 @@
 			user << "<span class='notice'>[I] doesn't seem to fit into [src].</span>"
 			return
 		if(beakers.len >= max_beakers)
-			user << "<span class='warning'>[src] already has [max_beakers] vials in it - another one isn't going to fit!</span>"
+			user << "<span class='warning'>[src] already has [max_beakers] beakers in it - another one isn't going to fit!</span>"
 			return
 		var/obj/item/weapon/reagent_containers/glass/beaker/B = I
 		user.drop_item(B, src)
@@ -109,9 +109,11 @@
 		return cartridge.darts
 
 /obj/item/weapon/gun/dartgun/proc/has_selected_beaker_reagents()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/weapon/gun/dartgun/proc/has_selected_beaker_reagents() called tick#: [world.time]")
 	return 0
 
 /obj/item/weapon/gun/dartgun/proc/remove_cartridge()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/weapon/gun/dartgun/proc/remove_cartridge() called tick#: [world.time]")
 	if(cartridge)
 		usr << "<span class='notice'>You pop the cartridge out of [src].</span>"
 		var/obj/item/weapon/dart_cartridge/C = cartridge
@@ -121,6 +123,7 @@
 		src.update_icon()
 
 /obj/item/weapon/gun/dartgun/proc/get_mixed_syringe()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/weapon/gun/dartgun/proc/get_mixed_syringe() called tick#: [world.time]")
 	if (!cartridge)
 		return 0
 	if(!cartridge.darts)
@@ -136,6 +139,7 @@
 	return dart
 
 /obj/item/weapon/gun/dartgun/proc/fire_dart(atom/target, mob/user)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/weapon/gun/dartgun/proc/fire_dart() called tick#: [world.time]")
 	if (locate (/obj/structure/table, src.loc))
 		return
 	else
@@ -257,6 +261,7 @@
 	onclose(user, "dartgun", src)
 
 /obj/item/weapon/gun/dartgun/proc/check_beaker_mixing(var/obj/item/B)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/weapon/gun/dartgun/proc/check_beaker_mixing() called tick#: [world.time]")
 	if(!mixing || !beakers)
 		return 0
 	for(var/obj/item/M in mixing)

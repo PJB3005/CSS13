@@ -58,8 +58,9 @@ obj/machinery/door/airlock/receive_signal(datum/signal/signal)
 
 
 obj/machinery/door/airlock/proc/send_status()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/send_status() called tick#: [world.time]")
 	if(radio_connection)
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.transmission_method = 1 //radio signal
 		signal.data["tag"] = id_tag
 		signal.data["timestamp"] = world.time
@@ -85,7 +86,7 @@ obj/machinery/door/airlock/Bumped(atom/AM)
 	if(istype(AM, /obj/mecha))
 		var/obj/mecha/mecha = AM
 		if(density && radio_connection && mecha.occupant && (src.allowed(mecha.occupant) || src.check_access_list(mecha.operation_req_access)))
-			var/datum/signal/signal = new
+			var/datum/signal/signal = getFromDPool(/datum/signal)
 			signal.transmission_method = 1 //radio signal
 			signal.data["tag"] = id_tag
 			signal.data["timestamp"] = world.time
@@ -99,6 +100,7 @@ obj/machinery/door/airlock/Bumped(atom/AM)
 	return
 
 obj/machinery/door/airlock/proc/set_frequency(new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/door/airlock/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	if(new_frequency)
 		frequency = new_frequency
@@ -138,7 +140,7 @@ obj/machinery/airlock_sensor
 
 	ghost_read = 0 // Deactivate ghost touching.
 	ghost_write = 0
-	
+
 	machine_flags = MULTITOOL_MENU
 
 
@@ -154,7 +156,7 @@ obj/machinery/airlock_sensor/update_icon()
 obj/machinery/airlock_sensor/attack_hand(mob/user)
 	if(..())
 		return
-	var/datum/signal/signal = new
+	var/datum/signal/signal = getFromDPool(/datum/signal)
 	signal.transmission_method = 1 //radio signal
 	signal.data["tag"] = master_tag
 	signal.data["command"] = command
@@ -164,7 +166,7 @@ obj/machinery/airlock_sensor/attack_hand(mob/user)
 
 obj/machinery/airlock_sensor/process()
 	if(on)
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.transmission_method = 1 //radio signal
 		signal.data["tag"] = id_tag
 		signal.data["timestamp"] = world.time
@@ -181,6 +183,7 @@ obj/machinery/airlock_sensor/process()
 	update_icon()
 
 obj/machinery/airlock_sensor/proc/set_frequency(new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/airlock_sensor/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	frequency = new_frequency
 	radio_connection = radio_controller.add_object(src, frequency, RADIO_AIRLOCK)
@@ -312,7 +315,7 @@ obj/machinery/access_button/attack_hand(mob/user)
 		user << "<span class='warning'>Access Denied</span>"
 
 	else if(radio_connection)
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.transmission_method = 1 //radio signal
 		signal.data["tag"] = master_tag
 		signal.data["command"] = command
@@ -333,6 +336,7 @@ obj/machinery/access_button/attackby(var/obj/item/W, var/mob/user)
 			qdel(src)
 
 obj/machinery/access_button/proc/set_frequency(new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/access_button/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	frequency = new_frequency
 	radio_connection = radio_controller.add_object(src, frequency, RADIO_AIRLOCK)

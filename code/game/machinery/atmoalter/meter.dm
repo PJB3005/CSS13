@@ -64,7 +64,7 @@
 
 		if(!radio_connection) return
 
-		var/datum/signal/signal = new
+		var/datum/signal/signal = getFromDPool(/datum/signal)
 		signal.source = src
 		signal.transmission_method = 1
 		signal.data = list(
@@ -90,6 +90,7 @@
 		radio_connection.post_signal(src, signal)
 
 /obj/machinery/meter/proc/status()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/meter/proc/status() called tick#: [world.time]")
 	var/t = ""
 	if (src.target)
 		var/datum/gas_mixture/environment = target.return_air()

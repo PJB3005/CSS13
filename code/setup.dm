@@ -948,6 +948,7 @@ var/list/RESTRICTED_CAMERA_NETWORKS = list( //Those networks can only be accesse
 #define WELD_FIXED		64 //if it is attacked by a welder and is anchored, it'll toggle between welded and unwelded to the floor
 #define MULTITOOL_MENU	128 //if it has multitool menu functionality inherently
 #define PURCHASER		256 //it connects to the centcom database at roundstart
+#define WIREJACK		512 //can we wirejack it? if flagged, machine calls wirejack()
 
 #define MAX_N_OF_ITEMS 999 // Used for certain storage machinery, BYOND infinite loop detector doesn't look things over 1000.
 
@@ -1140,7 +1141,7 @@ var/list/RESTRICTED_CAMERA_NETWORKS = list( //Those networks can only be accesse
 #define LANGUAGE_VOX "Vox-pidgin"
 #define LANGUAGE_CULT "Cult"
 
-//#define SAY_DEBUG 0
+/*#define SAY_DEBUG 0
 #ifdef SAY_DEBUG
 	#warning SOME ASSHOLE FORGOT TO COMMENT SAY_DEBUG BEFORE COMMITTING
 	#define say_testing(a,x) a << ("([__FILE__]L[__LINE__] SAYDEBUG) [x]")
@@ -1148,11 +1149,26 @@ var/list/RESTRICTED_CAMERA_NETWORKS = list( //Those networks can only be accesse
 	#define say_testing(a,x) null << "[x][a]"
 #endif
 
+#define JUSTFUCKMYSHITUP 1
+#ifdef JUSTFUCKMYSHITUP
+#define writepanic(a) if(ticker && ticker.current_state >= 3 && world.cpu > 100) write_panic(a)
+#warning IMA FUCK YOUR SHIT UP
+var/proccalls = 1
+//keep a list of last 10 proccalls maybe?
+/proc/write_panic(a)
+	set background = 1
+	panicfile["[proccalls]"] << a
+	if(++proccalls > 200) proccalls = 1
+
+#else
+	#define writepanic(a) null << a
+#endif*/
+
 //Bay lighting engine shit, not in /code/modules/lighting because BYOND is being shit about it
 #define LIGHTING_INTERVAL 5 // frequency, in 1/10ths of a second, of the lighting process
 
 #define LIGHTING_FALLOFF 1 // type of falloff to use for lighting; 1 for circular, 2 for square
-#define LIGHTING_LAMBERTIAN 1 // use lambertian shading for light sources
+#define LIGHTING_LAMBERTIAN 0 // use lambertian shading for light sources
 #define LIGHTING_HEIGHT 1 // height off the ground of light sources on the pseudo-z-axis, you should probably leave this alone
 #define LIGHTING_TRANSITIONS 0 // smooth, animated transitions, similar to TG station
 #ifdef LIGHTING_TRANSITIONS
@@ -1185,9 +1201,12 @@ var/list/RESTRICTED_CAMERA_NETWORKS = list( //Those networks can only be accesse
 //Default frequencies of signal based RC stuff, because comic and his magic numbers.
 #define FREQ_DISPOSAL 1367
 
+
 //Ore processing types for the ore processor
 #define ORE_PROCESSING_GENERAL 1
 #define ORE_PROCESSING_ALLOY 2
+
+#define SOUND_AMBIANCE			485	//Literally arbitrary.
 
 #define CONTIGUOUS_WALLS  1
 #define CONTIGUOUS_FLOORS 2

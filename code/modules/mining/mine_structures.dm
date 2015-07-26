@@ -19,6 +19,9 @@
 	icon_state = "hanginglantern-construct"
 	anchored = 1
 	layer = 5
+/obj/structure/hanging_lantern_hook/New(loc, newdir)
+	..()
+	dir = newdir
 
 /obj/structure/hanging_lantern_hook/attackby(obj/item/weapon/W as obj, mob/user as mob)
 
@@ -54,14 +57,6 @@
 	ghost_read = 0
 	var/flickering = 0 //SPOOK
 
-/obj/structure/hanging_lantern/New()
-	..()
-	alllights += src
-
-/obj/structure/hanging_lantern/Destroy()
-	alllights -= src
-	..()
-
 /obj/structure/hanging_lantern/attack_hand(mob/user)
 
 	user.visible_message("<span class='notice'>[user] takes the mining lantern off the \the [src].</span>", \
@@ -75,6 +70,7 @@
 
 //Direct rip from lights with a few adjustments, not much to worry about since it's not machinery
 /obj/structure/hanging_lantern/proc/flicker(var/amount = rand(10, 20))
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/hanging_lantern/proc/flicker() called tick#: [world.time]")
 	if(flickering)
 		return
 	//Store our light's vars in here

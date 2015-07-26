@@ -1,5 +1,7 @@
 /datum/controller/gameticker/proc/scoreboard(var/completions)
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/controller/gameticker/proc/scoreboard() called tick#: [world.time]")
+
 	//calls auto_declare_completion_* for all modes
 	for(var/handler in typesof(/datum/game_mode/proc))
 		if (findtext("[handler]","auto_declare_completion_"))
@@ -70,7 +72,7 @@
 		var/area/escape_zone = locate(/area/shuttle/escape/centcom)
 		if(E.stat != 2 && location in escape_zone) // Escapee Scores
 			for (var/obj/item/weapon/card/id/C1 in get_contents_in_object(E, /obj/item/weapon/card/id))
-				cashscore += C1.money
+				cashscore += C1.GetBalance()
 
 			for (var/obj/item/weapon/spacecash/C2 in get_contents_in_object(E, /obj/item/weapon/spacecash))
 				cashscore += C2.worth
@@ -242,6 +244,7 @@
 
 
 /mob/proc/scorestats(var/completions)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/proc/scorestats() called tick#: [world.time]")
 	var/dat = completions
 	dat += {"<BR><h2>Round Statistics and Score</h2>"}
 	if (ticker.mode.name == "nuclear emergency")
@@ -351,7 +354,10 @@
 	if (arena_top_score)
 		dat += "<B>Best Arena Fighter (won [arena_top_score] rounds!):</B> [score["arenabest"]]<BR>"
 	if (score["escapees"])
-		dat += "<B>Most Battered Escapee:</B> [score["dmgestname"]], [score["dmgestjob"]]: [score["dmgestdamage"]] damage ([score["dmgestkey"]])<BR>"
+		if(score["dmgestdamage"])
+			dat += "<B>Most Battered Escapee:</B> [score["dmgestname"]], [score["dmgestjob"]]: [score["dmgestdamage"]] damage ([score["dmgestkey"]])<BR>"
+		if(score["richestcash"])
+			dat += "<B>Richest Escapee:</B> [score["richestname"]], [score["richestjob"]]: [score["richestcash"]] space credits ([score["richestkey"]])<BR>"
 	else
 		dat += "The station wasn't evacuated or no one escaped!<BR>"
 	dat += {"<HR><BR>

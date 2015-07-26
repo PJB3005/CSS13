@@ -1,4 +1,5 @@
 /proc/dopage(src,target)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/dopage() called tick#: [world.time]")
 	var/href_list
 	var/href
 	href_list = params2list("src=\ref[src]&[target]=1")
@@ -8,6 +9,7 @@
 	return null
 
 /proc/get_area(const/atom/O)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_area() called tick#: [world.time]")
 	if (isnull(O))
 		return
 
@@ -23,18 +25,21 @@
 			return
 
 /proc/get_area_master(const/O)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_area_master() called tick#: [world.time]")
 	var/area/A = get_area(O)
 
 	if(isarea(A))
 		return A
 
 /proc/get_area_name(N) //get area by its name
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_area_name() called tick#: [world.time]")
 	for(var/area/A in areas)
 		if(A.name == N)
 			return A
 	return 0
 
 /proc/in_range(source, user)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/in_range() called tick#: [world.time]")
 	if(get_dist(source, user) <= 1)
 		return 1
 
@@ -42,6 +47,8 @@
 
 // Like view but bypasses luminosity check
 /proc/get_hear(var/range, var/atom/source)
+
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_hear() called tick#: [world.time]")
 
 	var/lum = source.luminosity
 	source.luminosity = 6
@@ -53,6 +60,7 @@
 
 
 /proc/alone_in_area(var/area/the_area, var/mob/must_be_alone, var/check_type = /mob/living/carbon)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/alone_in_area() called tick#: [world.time]")
 	var/area/our_area = get_area_master(the_area)
 	for(var/C in living_mob_list)
 		if(!istype(C, check_type))
@@ -64,6 +72,8 @@
 	return 1
 
 /proc/circlerange(center=usr,radius=3)
+
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/circlerange() called tick#: [world.time]")
 
 	var/turf/centerturf = get_turf(center)
 	var/list/turfs = new/list()
@@ -80,6 +90,8 @@
 
 /proc/circleview(center=usr,radius=3)
 
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/circleview() called tick#: [world.time]")
+
 	var/turf/centerturf = get_turf(center)
 	var/list/atoms = new/list()
 	var/rsq = radius * (radius+0.5)
@@ -94,6 +106,7 @@
 	return atoms
 
 /proc/get_dist_euclidian(atom/Loc1 as turf|mob|obj,atom/Loc2 as turf|mob|obj)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_dist_euclidian() called tick#: [world.time]")
 	var/dx = Loc1.x - Loc2.x
 	var/dy = Loc1.y - Loc2.y
 
@@ -102,6 +115,8 @@
 	return dist
 
 /proc/circlerangeturfs(center=usr,radius=3)
+
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/circlerangeturfs() called tick#: [world.time]")
 
 	var/turf/centerturf = get_turf(center)
 	var/list/turfs = new/list()
@@ -116,6 +131,8 @@
 
 /proc/circleviewturfs(center=usr,radius=3)		//Is there even a diffrence between this proc and circlerangeturfs()?
 
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/circleviewturfs() called tick#: [world.time]")
+
 	var/turf/centerturf = get_turf(center)
 	var/list/turfs = new/list()
 	var/rsq = radius * (radius+0.5)
@@ -127,30 +144,8 @@
 			turfs += T
 	return turfs
 
-
-//This is the new version of recursive_mob_check, used for say().
-//The other proc was left intact because morgue trays use it.
-/proc/recursive_hear_check(atom/O)
-	var/list/processing_list = list(O)
-	var/list/processed_list = list()
-	var/found_atoms = list()
-
-	while (processing_list.len)
-		var/atom/A = processing_list[1]
-
-		if (A.flags & HEAR)
-			found_atoms |= A
-
-		for (var/atom/B in A)
-			if (!processed_list[B])
-				processing_list |= B
-
-		processing_list.Cut(1, 2)
-		processed_list[A] = A
-
-	return found_atoms
-
 /proc/recursive_type_check(atom/O, type = /atom)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/recursive_type_check() called tick#: [world.time]")
 	var/list/processing_list = list(O)
 	var/list/processed_list = new/list()
 	var/found_atoms = new/list()
@@ -172,96 +167,12 @@
 
 //var/debug_mob = 0
 
-// Will recursively loop through an atom's contents and check for mobs, then it will loop through every atom in that atom's contents.
-// It will keep doing this until it checks every content possible. This will fix any problems with mobs, that are inside objects,
-// being unable to hear people due to being in a box within a bag.
-
-/proc/recursive_mob_check(var/atom/O,var/client_check=1,var/sight_check=1,var/include_radio=1)
-
-	var/list/processing_list = list(O)
-	var/list/processed_list = list()
-	var/list/found_mobs = list()
-
-	while(processing_list.len)
-
-		var/atom/A = processing_list[1]
-		var/passed = 0
-
-		if(ismob(A))
-			var/mob/A_tmp = A
-			passed=1
-
-			if(client_check && !A_tmp.client)
-				passed=0
-
-			if(sight_check && !isInSight(A_tmp, O))
-				passed=0
-
-		else if(include_radio && istype(A, /obj/item/device/radio))
-			passed=1
-
-			if(sight_check && !isInSight(A, O))
-				passed=0
-
-		if(passed)
-			found_mobs |= A
-
-		for(var/atom/B in A)
-			if(!processed_list[B])
-				processing_list |= B
-
-		processing_list.Cut(1, 2)
-		processed_list[A] = A
-
-	return found_mobs
-
-// The old system would loop through lists for a total of 5000 per function call, in an empty server.
-// This new system will loop at around 1000 in an empty server.
-
-/proc/get_hearers_in_view(var/R, var/atom/source)
-	// Returns a list of hearers in range of R from source. Used in saycode.
-	var/turf/T = get_turf(source)
-	var/list/hear = list()
-
-	if(!T)
-		return hear
-
-	var/list/range = get_hear(R, T)
-	for(var/atom/movable/A in range)
-		hear |= recursive_hear_check(A)
-
-	return hear
-
 /proc/get_contents_in_object(atom/O, type_path = /atom/movable)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_contents_in_object() called tick#: [world.time]")
 	if (O)
 		return recursive_type_check(O, type_path) - O
 	else
 		return new/list()
-
-/proc/get_movables_in_radio_ranges(var/list/obj/item/device/radio/radios)
-
-	//set background = 1
-
-	. = list()
-	// Returns a list of mobs who can hear any of the radios given in @radios
-	for(var/i = 1; i <= radios.len; i++)
-		var/obj/item/device/radio/R = radios[i]
-		if(R)
-			. |= get_hearers_in_view(R)
-	. |= get_mobs_in_radio_ranges(radios)
-	return .
-
-/**
- * Returns a list of mobs who can hear any of the radios given in @radios.
- */
-/proc/get_mobs_in_radio_ranges(list/obj/item/device/radio/radios)
-	set background = BACKGROUND_ENABLED
-
-	. = new/list()
-
-	for (var/obj/item/device/radio/R in radios)
-		if (R)
-			. |= get_hearers_in_view(R.canhear_range, R)
 
 #define SIGN(X) ((X<0)?-1:1)
 
@@ -298,6 +209,7 @@ proc
 #undef SIGN
 
 proc/isInSight(var/atom/A, var/atom/B)
+	//writepanic("[__FILE__].[__LINE__] \\/proc/isInSight() called tick#: [world.time]")
 	var/turf/Aturf = get_turf(A)
 	var/turf/Bturf = get_turf(B)
 
@@ -311,6 +223,7 @@ proc/isInSight(var/atom/A, var/atom/B)
 		return 0
 
 /proc/get_cardinal_step_away(atom/start, atom/finish) //returns the position of a step from start away from finish, in one of the cardinal directions
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_cardinal_step_away() called tick#: [world.time]")
 	//returns only NORTH, SOUTH, EAST, or WEST
 	var/dx = finish.x - start.x
 	var/dy = finish.y - start.y
@@ -326,12 +239,14 @@ proc/isInSight(var/atom/A, var/atom/B)
 			return get_step(start, EAST)
 
 /proc/try_move_adjacent(atom/movable/AM)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/try_move_adjacent() called tick#: [world.time]")
 	var/turf/T = get_turf(AM)
 	for(var/direction in cardinal)
 		if(AM.Move(get_step(T, direction)))
 			break
 
 /proc/get_mob_by_key(var/key)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_mob_by_key() called tick#: [world.time]")
 	for(var/mob/M in mob_list)
 		if(M.ckey == lowertext(key))
 			return M
@@ -339,6 +254,7 @@ proc/isInSight(var/atom/A, var/atom/B)
 
 //i think this is used soley by verb/give(), cael
 proc/check_can_reach(atom/user, atom/target)
+	//writepanic("[__FILE__].[__LINE__] \\/proc/check_can_reach() called tick#: [world.time]")
 	if(!in_range(user,target))
 		return 0
 	return CanReachThrough(get_turf(user), get_turf(target), target)
@@ -347,6 +263,8 @@ proc/check_can_reach(atom/user, atom/target)
 var/list/DummyCache = list()
 
 /proc/CanReachThrough(turf/srcturf, turf/targetturf, atom/target, var/pass_flags=0)
+
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/CanReachThrough() called tick#: [world.time]")
 
 	var/obj/item/weapon/dummy/D = locate() in DummyCache
 	if(!D)
@@ -395,6 +313,7 @@ var/list/DummyCache = list()
 
 // Will return a list of active candidates. It increases the buffer 5 times until it finds a candidate which is active within the buffer.
 /proc/get_active_candidates(var/role_id=null, var/buffer=ROLE_SELECT_AFK_BUFFER, var/poll=0)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_active_candidates() called tick#: [world.time]")
 	var/list/candidates = list() //List of candidate mobs to assume control of the new larva ~fuck you
 	var/i = 0
 	while(candidates.len <= 0 && i < 5)
@@ -418,6 +337,7 @@ var/list/DummyCache = list()
 	return candidates
 
 /proc/get_candidates(var/role_id=null)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_candidates() called tick#: [world.time]")
 	. = list()
 	for(var/mob/dead/observer/G in player_list)
 		if(!(G.mind && G.mind.current && G.mind.current.stat != DEAD))
@@ -425,6 +345,7 @@ var/list/DummyCache = list()
 				. += G.client
 
 /proc/ScreenText(obj/O, maptext="", screen_loc="CENTER-7,CENTER-7", maptext_height=480, maptext_width=480)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/ScreenText() called tick#: [world.time]")
 	if(!isobj(O))	O = new /obj/screen/text()
 	O.maptext = maptext
 	O.maptext_height = maptext_height
@@ -433,6 +354,7 @@ var/list/DummyCache = list()
 	return O
 
 /proc/Show2Group4Delay(obj/O, list/group, delay=0)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/Show2Group4Delay() called tick#: [world.time]")
 	if(!isobj(O))	return
 	if(!group)	group = clients
 	for(var/client/C in group)
@@ -443,6 +365,7 @@ var/list/DummyCache = list()
 				C.screen -= O
 
 /proc/flick_overlay(image/I, list/show_to, duration)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/flick_overlay() called tick#: [world.time]")
 	for(var/client/C in show_to)
 		C.images += I
 	sleep(duration)
@@ -450,6 +373,7 @@ var/list/DummyCache = list()
 		C.images -= I
 
 /proc/get_active_player_count()
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/get_active_player_count() called tick#: [world.time]")
 	// Get active players who are playing in the round
 	var/active_players = 0
 	for(var/i = 1; i <= player_list.len; i++)
@@ -487,6 +411,8 @@ var/list/DummyCache = list()
 
 /proc/projectile_trajectory(var/src_x, var/src_y, var/rotation, var/angle, var/power)
 
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/projectile_trajectory() called tick#: [world.time]")
+
 	// returns the destination (Vx,y) that a projectile shot at [src_x], [src_y], with an angle of [angle],
 	// rotated at [rotation] and with the power of [power]
 	// Thanks to VistaPOWA for this function
@@ -504,6 +430,7 @@ var/list/DummyCache = list()
 
 
 /proc/mobs_in_area(var/area/the_area, var/client_needed=0, var/moblist=mob_list)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/mobs_in_area() called tick#: [world.time]")
 	var/list/mobs_found[0]
 	var/area/our_area = get_area_master(the_area)
 	for(var/mob/M in moblist)
@@ -515,15 +442,19 @@ var/list/DummyCache = list()
 	return mobs_found
 
 /proc/GetRedPart(const/hexa)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/GetRedPart() called tick#: [world.time]")
 	return hex2num(copytext(hexa, 2, 4))
 
 /proc/GetGreenPart(const/hexa)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/GetGreenPart() called tick#: [world.time]")
 	return hex2num(copytext(hexa, 4, 6))
 
 /proc/GetBluePart(const/hexa)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/GetBluePart() called tick#: [world.time]")
 	return hex2num(copytext(hexa, 6, 8))
 
 /proc/GetHexColors(const/hexa)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/GetHexColors() called tick#: [world.time]")
 	return list(\
 		GetRedPart(hexa),\
 		GetGreenPart(hexa),\
@@ -531,6 +462,7 @@ var/list/DummyCache = list()
 	)
 
 /proc/MixColors(const/list/colors)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/MixColors() called tick#: [world.time]")
 	var/list/reds = new
 	var/list/blues = new
 	var/list/greens = new
@@ -548,6 +480,7 @@ var/list/DummyCache = list()
 	return rgb(r,g,b)
 
 /proc/mixOneColor(var/list/weight, var/list/color)
+	//writepanic("[__FILE__].[__LINE__] (no type)([usr ? usr.ckey : ""])  \\/proc/mixOneColor() called tick#: [world.time]")
 	if(!weight || !color || length(weight) != length(color))
 		return 0
 

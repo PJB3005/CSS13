@@ -10,6 +10,7 @@
 
 
 /obj/item/weapon/storage/belt/proc/can_use()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/weapon/storage/belt/proc/can_use() called tick#: [world.time]")
 	if(!ismob(loc)) return 0
 	var/mob/M = loc
 	if(src in M.get_equipped_items())
@@ -39,6 +40,7 @@
 		"/obj/item/device/t_scanner",
 		"/obj/item/device/analyzer",
 		"/obj/item/taperoll/engineering",
+		"/obj/item/taperoll/atmos",
 		"/obj/item/weapon/extinguisher",
 		"/obj/item/weapon/rcd_ammo",
 		"/obj/item/weapon/reagent_containers/glass/fuelcan",

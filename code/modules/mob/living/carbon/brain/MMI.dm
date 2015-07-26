@@ -27,6 +27,7 @@
 
 	// Return true if handled
 /obj/item/device/mmi/proc/try_handling_mommi_construction(var/obj/item/O as obj, var/mob/user as mob)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/device/mmi/proc/try_handling_mommi_construction() called tick#: [world.time]")
 	if(istype(O,/obj/item/weapon/screwdriver))
 		for(var/t in mommi_assembly_parts)
 			var/cc=contents_count(t)
@@ -118,7 +119,7 @@
 		user.drop_item(O)
 		del(O)
 
-		name = "Man-Machine Interface: [brainmob.real_name]"
+		name = "[initial(name)]: [brainmob.real_name]"
 		icon_state = "mmi_full"
 
 		locked = 1
@@ -155,9 +156,10 @@
 		brainmob = null//Set mmi brainmob var to null
 
 		icon_state = "mmi_empty"
-		name = "Man-Machine Interface"
+		name = initial(name)
 
 /obj/item/device/mmi/proc/transfer_identity(var/mob/living/carbon/human/H)//Same deal as the regular brain proc. Used for human-->robot people.
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/device/mmi/proc/transfer_identity() called tick#: [world.time]")
 	brainmob = new(src)
 	brainmob.name = H.real_name
 	brainmob.real_name = H.real_name
@@ -188,6 +190,7 @@
 	set category = "MMI"
 	set src = usr.loc//In user location, or in MMI in this case.
 	set popup_menu = 0//Will not appear when right clicking.
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/obj/item/device/mmi/radio_enabled/verb/Toggle_Broadcasting()  called tick#: [world.time]")
 
 	if(brainmob.stat)//Only the brainmob will trigger these so no further check is necessary.
 		brainmob << "Can't do that while incapacitated or dead."
@@ -201,6 +204,7 @@
 	set category = "MMI"
 	set src = usr.loc
 	set popup_menu = 0
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\/obj/item/device/mmi/radio_enabled/verb/Toggle_Listening()  called tick#: [world.time]")
 
 	if(brainmob.stat)
 		brainmob << "Can't do that while incapacitated or dead."
@@ -222,6 +226,7 @@
 	..()
 
 /obj/item/device/mmi/proc/contents_count(var/type)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/device/mmi/proc/contents_count() called tick#: [world.time]")
 	var/c=0
 	for(var/O in contents)
 		if(istype(O,type))

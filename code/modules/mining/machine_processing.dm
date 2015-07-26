@@ -29,6 +29,7 @@
 	set_frequency(frequency)
 
 /obj/machinery/computer/smelting/proc/set_frequency(new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/smelting/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	frequency = new_frequency
 	if(frequency)
@@ -138,6 +139,10 @@
 		else
 			dat += text("No ID inserted.  <A href='?src=\ref[src];insert=1'>Insert ID.</A><br>")
 
+	else if(id)	//I don't care but the ID got in there in some way, allow them to eject it atleast.
+		dat += "<br><A href='?src=\ref[src];eject=1'>Eject ID.</A>"
+
+
 	var/datum/browser/popup = new(user, "console_processing_unit", name, 400, 500, src)
 	popup.set_content(dat)
 	popup.open()
@@ -178,6 +183,9 @@
 		return 1
 
 	if(href_list["insert"])
+		if(smelter_data && smelter_data["credits"] == -1)	//No credit mode.
+			return 1
+
 		if(id)
 			usr << "<span class='notify'>There is already an ID in the console!</span>"
 			return 1
@@ -203,6 +211,9 @@
 
 /obj/machinery/computer/smelting/attackby(var/obj/item/W, var/mob/user)
 	if(istype(W, /obj/item/weapon/card/id))
+		if(smelter_data && smelter_data["credits"] == -1)	//No credit mode.
+			return 1
+
 		if(id)
 			usr << "<span class='notify'>There is already an ID in the console!</span>"
 			return 1
@@ -216,10 +227,11 @@
 
 //Just a little helper proc
 /obj/machinery/computer/smelting/proc/send_signal(list/data)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/smelting/proc/send_signal() called tick#: [world.time]")
 	if(!frequency)
 		return
 
-	var/datum/signal/signal = new
+	var/datum/signal/signal = getFromDPool(/datum/signal)
 	signal.data["tag"] = smelter_tag
 	signal.transmission_method = 1 //radio signal
 	signal.source = src
@@ -238,6 +250,7 @@
 	updateUsrDialog()
 
 /obj/machinery/computer/smelting/proc/request_status()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/computer/smelting/proc/request_status() called tick#: [world.time]")
 	smelter_data = null
 	send_signal(list("sigtype" = "status"))
 
@@ -344,6 +357,7 @@
 	set_frequency(frequency)
 
 /obj/machinery/mineral/processing_unit/proc/broadcast_status()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/mineral/processing_unit/proc/broadcast_status() called tick#: [world.time]")
 	var/list/data[5]
 
 	data["recipes"] = recipes
@@ -361,7 +375,8 @@
 	send_signal(data)
 
 /obj/machinery/mineral/processing_unit/proc/send_signal(list/data)
-	var/datum/signal/signal = new
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/mineral/processing_unit/proc/send_signal() called tick#: [world.time]")
+	var/datum/signal/signal = getFromDPool(/datum/signal)
 	signal.transmission_method = 1 //radio signal
 	signal.source = src
 	signal.data["tag"] = id_tag
@@ -370,13 +385,15 @@
 	radio_connection.post_signal(src, signal)
 
 /obj/machinery/mineral/processing_unit/proc/set_frequency(new_frequency)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/mineral/processing_unit/proc/set_frequency() called tick#: [world.time]")
 	radio_controller.remove_object(src, frequency)
 	frequency = new_frequency
 	if(frequency)
 		radio_connection = radio_controller.add_object(src, frequency)
 
-//Seperate proc so the recycling machine can override it.
+//seperate proc so the recycling machine can override it.
 /obj/machinery/mineral/processing_unit/proc/grab_ores()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/machinery/mineral/processing_unit/proc/grab_ores() called tick#: [world.time]")
 	var/turf/in_T = get_step(src, in_dir)
 	var/turf/out_T = get_step(src, out_dir)
 
@@ -394,9 +411,15 @@
 			continue
 
 		var/obj/item/weapon/ore/O = A
+		if(!O.material)
+			continue
+
 		ore.addAmount(O.material, 1)//1 per ore
 
 		var/datum/material/mat = ore.getMaterial(O.material)
+		if(!mat)
+			continue
+
 		credits += mat.value //Dosh.
 
 		qdel(O)
@@ -453,6 +476,9 @@
 		update_icon()
 
 	if(signal.data["claimcredits"])
+		if(credits < 1)	//Is there actual money to collect?
+			return 1
+
 		var/datum/money_account/acct = signal.data["claimcredits"]
 		if(istype(acct) && acct.charge(-credits, null, "Claimed mining credits.", dest_name = "Processing Machine"))
 			credits = 0

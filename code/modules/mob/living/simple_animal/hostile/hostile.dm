@@ -29,6 +29,11 @@
 	var/stat_exclusive = 0 //Mobs with this set to 1 will exclusively attack things defined by stat_attack, stat_attack 2 means they will only attack corpses
 	var/attack_faction = null //Put a faction string here to have a mob only ever attack a specific faction
 
+/mob/living/simple_animal/hostile/resetVariables()
+	..("wanted_objects", "friends", args)
+	wanted_objects = list()
+	friends = list()
+
 /mob/living/simple_animal/hostile/Life()
 	. = ..()
 	if(istype(loc, /obj/item/device/mobcapsule))
@@ -63,6 +68,7 @@
 
 
 /mob/living/simple_animal/hostile/proc/ListTargets()//Step 1, find out what we can see
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/ListTargets() called tick#: [world.time]")
 	var/list/L = list()
 	if(!search_objects)
 		var/list/Mobs = hearers(vision_range, src) - src //Remove self, so we don't suicide
@@ -76,6 +82,7 @@
 	return L
 
 /mob/living/simple_animal/hostile/proc/FindTarget()//Step 2, filter down possible targets to things we actually care about
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/FindTarget() called tick#: [world.time]")
 	var/list/Targets = list()
 	var/Target
 	for(var/atom/A in ListTargets())
@@ -96,9 +103,11 @@
 	return Target //We now have a target
 
 /mob/living/simple_animal/hostile/proc/Found(var/atom/A)//This is here as a potential override to pick a specific target if available
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/Found() called tick#: [world.time]")
 	return
 
 /mob/living/simple_animal/hostile/proc/PickTarget(var/list/Targets)//Step 3, pick amongst the possible, attackable targets
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/PickTarget() called tick#: [world.time]")
 	if(target != null)//If we already have a target, but are told to pick again, calculate the lowest distance between all possible, and pick from the lowest distance targets
 		for(var/atom/A in Targets)
 			var/target_dist = get_dist(src, target)
@@ -147,6 +156,7 @@
 	return 0
 
 /mob/living/simple_animal/hostile/proc/GiveTarget(var/new_target)//Step 4, give us our selected target
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/GiveTarget() called tick#: [world.time]")
 	target = new_target
 	if(target != null)
 		Aggro()
@@ -154,6 +164,7 @@
 	return
 
 /mob/living/simple_animal/hostile/proc/MoveToTarget()//Step 5, handle movement between us and our target
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/MoveToTarget() called tick#: [world.time]")
 	stop_automated_movement = 1
 	if(!target || !CanAttack(target))
 		LoseTarget()
@@ -182,6 +193,7 @@
 	LostTarget()
 
 /mob/living/simple_animal/hostile/proc/Goto(var/target, var/delay, var/minimum_distance)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/Goto() called tick#: [world.time]")
 	walk_to(src, target, minimum_distance, delay)
 
 /mob/living/simple_animal/hostile/adjustBruteLoss(var/damage)
@@ -201,6 +213,8 @@
 
 /mob/living/simple_animal/hostile/proc/AttackTarget()
 
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/AttackTarget() called tick#: [world.time]")
+
 	stop_automated_movement = 1
 	if(!target || !CanAttack(target))
 		LoseTarget()
@@ -213,22 +227,27 @@
 		return 1
 
 /mob/living/simple_animal/hostile/proc/AttackingTarget()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/AttackingTarget() called tick#: [world.time]")
 	target.attack_animal(src)
 
 /mob/living/simple_animal/hostile/proc/Aggro()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/Aggro() called tick#: [world.time]")
 	vision_range = aggro_vision_range
 
 /mob/living/simple_animal/hostile/proc/LoseAggro()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/LoseAggro() called tick#: [world.time]")
 	stop_automated_movement = 0
 	vision_range = idle_vision_range
 
 /mob/living/simple_animal/hostile/proc/LoseTarget()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/LoseTarget() called tick#: [world.time]")
 	stance = HOSTILE_STANCE_IDLE
 	target = null
 	walk(src, 0)
 	LoseAggro()
 
 /mob/living/simple_animal/hostile/proc/LostTarget()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/LostTarget() called tick#: [world.time]")
 	stance = HOSTILE_STANCE_IDLE
 	walk(src, 0)
 	LoseAggro()
@@ -242,6 +261,8 @@
 	walk(src, 0)
 
 /mob/living/simple_animal/hostile/proc/OpenFire(var/target)
+
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/OpenFire() called tick#: [world.time]")
 
 	var/tturf = get_turf(target)
 	if(rapid)
@@ -269,6 +290,7 @@
 	return
 
 /mob/living/simple_animal/hostile/proc/Shoot(var/target, var/start, var/user, var/bullet = 0)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/Shoot() called tick#: [world.time]")
 	if(target == start)
 		return
 
@@ -287,6 +309,7 @@
 	return
 
 /mob/living/simple_animal/hostile/proc/DestroySurroundings()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/DestroySurroundings() called tick#: [world.time]")
 	if(environment_smash)
 		EscapeConfinement()
 		for(var/dir in cardinal)
@@ -301,6 +324,7 @@
 	return
 
 /mob/living/simple_animal/hostile/proc/EscapeConfinement()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/EscapeConfinement() called tick#: [world.time]")
 	if(buckled)
 		buckled.attack_animal(src)
 	if(!isturf(src.loc) && src.loc != null)//Did someone put us in something?
@@ -309,6 +333,7 @@
 	return
 
 /mob/living/simple_animal/hostile/proc/FindHidden(var/atom/hidden_target)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/mob/living/simple_animal/hostile/proc/FindHidden() called tick#: [world.time]")
 	if(istype(target.loc, /obj/structure/closet) || istype(target.loc, /obj/machinery/disposal) || istype(target.loc, /obj/machinery/sleeper))
 		return 1
 	else

@@ -69,6 +69,7 @@ your object, but it will pass through the HTML interface first allowing intercep
 mob/var/datum/html_interface/hi
 
 mob/verb/test()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""]) \\mob/verb/test()  called tick#: [world.time]")
 	if (!hi) hi = new/datum/html_interface(src, "[src.key]")
 
 	hi.updateLayout("<div id=\"content\"></div>")
@@ -124,8 +125,10 @@ mob/verb/test()
 
 /*                 * Hooks */
 /datum/html_interface/proc/specificRenderTitle(datum/html_interface_client/hclient, ignore_cache = FALSE)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/specificRenderTitle() called tick#: [world.time]")
 
 /datum/html_interface/proc/sendResources(client/client)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\datum/html_interface/proc/sendResources() called tick#: [world.time]")
 	client << browse_rsc('jquery.min.js')
 	client << browse_rsc('bootstrap.min.js')
 	client << browse_rsc('bootstrap.min.css')
@@ -134,6 +137,7 @@ mob/verb/test()
 	client << browse_rsc('html_interface_icons.css')
 
 /datum/html_interface/proc/createWindow(datum/html_interface_client/hclient)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/createWindow() called tick#: [world.time]")
 	winclone(hclient.client, "window", "browser_\ref[src]")
 
 	var/list/params = list(
@@ -149,9 +153,12 @@ mob/verb/test()
 	winset(hclient.client, "browser_\ref[src].browser", list2params(list("parent" = "browser_\ref[src]", "type" = "browser", "pos" = "0,0", "size" = "[width]x[height]", "anchor1" = "0,0", "anchor2" = "100,100", "use-title" = "true", "auto-format" = "false")))
 
 /*                 * Public API */
-/datum/html_interface/proc/getTitle() return src.title
+/datum/html_interface/proc/getTitle()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/getTitle() called tick#: [world.time]")
+	return src.title
 
 /datum/html_interface/proc/setTitle(title, ignore_cache = FALSE)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\datum/html_interface/proc/setTitle() called tick#: [world.time]")
 	src.title = title
 
 	var/datum/html_interface_client/hclient
@@ -162,6 +169,7 @@ mob/verb/test()
 		if (hclient && hclient.active) src._renderTitle(src.clients[client], ignore_cache)
 
 /datum/html_interface/proc/executeJavaScript(jscript, datum/html_interface_client/hclient = null)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/executeJavaScript() called tick#: [world.time]")
 	if (hclient)
 		hclient = getClient(hclient)
 
@@ -171,8 +179,8 @@ mob/verb/test()
 		for (var/client in src.clients) if(src.clients[client]) src.executeJavaScript(jscript, src.clients[client])
 
 /datum/html_interface/proc/callJavaScript(func, list/arguments, datum/html_interface_client/hclient = null)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/callJavaScript() called tick#: [world.time]")
 	if (!arguments) arguments = new/list()
-
 	if (hclient)
 		hclient = getClient(hclient)
 
@@ -183,8 +191,9 @@ mob/verb/test()
 		for (var/client in src.clients) if (src.clients[client]) src.callJavaScript(func, arguments, src.clients[client])
 
 /datum/html_interface/proc/updateLayout(nlayout)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/updateLayout() called tick#: [world.time]")
 	src.layout = nlayout
-	
+
 
 	var/datum/html_interface_client/hclient
 
@@ -194,6 +203,7 @@ mob/verb/test()
 		if (hclient && hclient.active) src._renderLayout(hclient)
 
 /datum/html_interface/proc/updateContent(id, content, ignore_cache = FALSE)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/updateContent() called tick#: [world.time]")
 	src.content_elements[id] = content
 
 	var/datum/html_interface_client/hclient
@@ -203,12 +213,14 @@ mob/verb/test()
 
 		if (hclient && hclient.active)
 			spawn (-1) src._renderContent(id, hclient, ignore_cache)
-/datum/html_interface/proc/show(datum/html_interface_client/hclient)
+/datum/html_interface/proc/show(datum/html_interface_client/hclient, var/datum/html_interface/oldwindow)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/show() called tick#: [world.time]")
 	hclient = getClient(hclient, TRUE)
 
 	if (istype(hclient))
 		// This needs to be commented out due to BYOND bug http://www.byond.com/forum/?post=1487244
 		// /client/proc/send_resources() executes this per client to avoid the bug, but by using it here files may be deleted just as the HTML is loaded,
+		//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\// /client/proc/send_resources() called tick#: [world.time]")
 		// causing file not found errors.
 //		src.sendResources(hclient.client)
 
@@ -220,10 +232,13 @@ mob/verb/test()
 			hclient.is_loaded = FALSE
 			hclient.client << output(replacetextEx(replacetextEx(file2text('html_interface.html'), "\[hsrc\]", "\ref[src]"), "</head>", "[head]</head>"), "browser_\ref[src].browser")
 			winshow(hclient.client, "browser_\ref[src]", TRUE)
+		if(oldwindow && winexists(hclient.client, "browser_\ref[oldwindow]"))
+			winshow(hclient.client, "browser_\ref[oldwindow]", FALSE)
 
 		while (hclient.client && hclient.active && !hclient.is_loaded) sleep(2)
 
 /datum/html_interface/proc/hide(datum/html_interface_client/hclient)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/hide() called tick#: [world.time]")
 	hclient = getClient(hclient)
 
 	if (istype(hclient))
@@ -241,6 +256,7 @@ mob/verb/test()
 
 // Convert a /mob to /client, and /client to /datum/html_interface_client
 /datum/html_interface/proc/getClient(client, create_if_not_exist = FALSE)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/getClient() called tick#: [world.time]")
 	if (istype(client, /datum/html_interface_client)) return src._getClient(client)
 	else if (ismob(client))
 		var/mob/mob = client
@@ -256,14 +272,17 @@ mob/verb/test()
 	else                                            return null
 
 /datum/html_interface/proc/enableFor(datum/html_interface_client/hclient)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/enableFor() called tick#: [world.time]")
 	hclient.active = TRUE
 
 	src.show(hclient)
 
 /datum/html_interface/proc/disableFor(datum/html_interface_client/hclient)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/disableFor() called tick#: [world.time]")
 	hclient.active = FALSE
 
 /datum/html_interface/proc/isUsed()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/isUsed() called tick#: [world.time]")
 	if (src.clients && src.clients.len > 0)
 		var/datum/html_interface_client/hclient
 
@@ -278,6 +297,7 @@ mob/verb/test()
 	return FALSE
 
 /datum/html_interface/proc/closeAll()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/closeAll() called tick#: [world.time]")
 	if (src.clients)
 		for (var/client in src.clients)
 			src.hide(src.clients[client])
@@ -285,6 +305,7 @@ mob/verb/test()
 /*                 * Danger Zone */
 
 /datum/html_interface/proc/_getClient(datum/html_interface_client/hclient)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/_getClient() called tick#: [world.time]")
 	if (hclient)
 		if (hclient.client)
 			// res = if the client has been active in the past 10 minutes and the client is allowed to view the object (context-sensitive).
@@ -302,6 +323,7 @@ mob/verb/test()
 		return null
 
 /datum/html_interface/proc/_renderTitle(datum/html_interface_client/hclient, ignore_cache = FALSE, ignore_loaded = FALSE)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/_renderTitle() called tick#: [world.time]")
 	if (hclient && (ignore_loaded || hclient.is_loaded))
 
 		// Only render if we have new content.
@@ -314,6 +336,7 @@ mob/verb/test()
 			hclient.client << output(list2params(list(title)), "browser_\ref[src].browser:setTitle")
 
 /datum/html_interface/proc/_renderLayout(datum/html_interface_client/hclient, ignore_loaded = FALSE)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/_renderLayout() called tick#: [world.time]")
 	if (hclient && (ignore_loaded || hclient.is_loaded))
 
 		var/html   = src.layout
@@ -326,6 +349,7 @@ mob/verb/test()
 			for (var/id in src.content_elements) src._renderContent(id, hclient, ignore_loaded = ignore_loaded)
 
 /datum/html_interface/proc/_renderContent(id, datum/html_interface_client/hclient, ignore_cache = FALSE, ignore_loaded = FALSE)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/datum/html_interface/proc/_renderContent() called tick#: [world.time]")
 	if (hclient && (ignore_loaded || hclient.is_loaded))
 		var/html   = src.content_elements[id]
 
@@ -353,4 +377,4 @@ mob/verb/test()
 
 				if ("onclose")
 					src.hide(hclient)
-		else if (src.ref && hclient.active) src.ref.Topic(href, href_list, hclient)
+		else if (src.ref) src.ref.Topic(href, href_list, hclient, src)

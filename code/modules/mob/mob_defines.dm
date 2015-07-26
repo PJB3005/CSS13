@@ -149,8 +149,8 @@
 	var/datum/hud/hud_used = null
 	var/datum/ui_icons/gui_icons = null
 
-	var/list/grabbed_by = list(  )
-	var/list/requests = list(  )
+	var/list/grabbed_by = list()
+	var/list/requests = list()
 
 	var/list/mapobjs = list()
 
@@ -260,3 +260,20 @@
 
 	var/list/languages[0]
 	var/stat_fucked = 0
+
+/mob/resetVariables()
+	..("callOnFace", "pinned", "embedded", "abilities", "grabbed_by", "requests", "mapobjs", "mutations", "spell_list", "viruses", "resistances", "radar_blips", "active_genes", "attack_log", "speak_emote", args)
+	callOnFace = list()
+	pinned = list()
+	embedded = list()
+	abilities = list()
+	grabbed_by = list()
+	requests = list()
+	mapobjs = list()
+	mutations = list()
+	spell_list = list()
+	viruses = list()
+	resistances = list()
+	radar_blips = list()
+	active_genes = list()
+	attack_log = list()

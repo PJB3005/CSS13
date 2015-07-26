@@ -40,9 +40,11 @@
 	var/movement_delay = 0 //Speed of the vehicle decreases as this value increases. Anything above 6 is slow, 1 is fast and 0 is very fast
 
 /obj/structure/stool/bed/chair/vehicle/proc/getMovementDelay()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/stool/bed/chair/vehicle/proc/getMovementDelay() called tick#: [world.time]")
 	return movement_delay
 
 /obj/structure/stool/bed/chair/vehicle/proc/delayNextMove(var/delay, var/additive=0)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/stool/bed/chair/vehicle/proc/delayNextMove() called tick#: [world.time]")
 	move_delayer.delayNext(delay,additive)
 
 /obj/structure/stool/bed/chair/vehicle/New()
@@ -82,6 +84,7 @@
 			user << "You don't need a key."
 
 /obj/structure/stool/bed/chair/vehicle/proc/check_key(var/mob/user)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/stool/bed/chair/vehicle/proc/check_key() called tick#: [world.time]")
 	if(!keytype)
 		return 1
 	if(mykey)
@@ -91,27 +94,27 @@
 /obj/structure/stool/bed/chair/vehicle/relaymove(var/mob/user, direction)
 	if(user.stat || user.stunned || user.weakened || user.paralysis  || destroyed)
 		unbuckle()
-		return
+		return 0
 	if(!check_key(user))
 		user << "<span class='notice'>You'll need the keys in one of your hands to drive \the [src].</span>"
-		return
+		return 0
 	if(empstun > 0)
 		if(user)
 			user << "<span class='warning'>\the [src] is unresponsive.</span>"
-		return
+		return 0
 	if(move_delayer.blocked())
-		return
+		return 0
 	if(istype(src.loc, /turf/space))
-		if(!src.Process_Spacemove(0))	return
+		if(!src.Process_Spacemove(0))	return 0
 
 	step(src, direction)
 	delayNextMove(getMovementDelay())
-	update_mob()
 	handle_rotation()
 	/*
 	if(istype(src.loc, /turf/space) && (!src.Process_Spacemove(0, user)))
 		var/turf/space/S = src.loc
 		S.Entered(src)*/
+	return 0
 
 /obj/structure/stool/bed/chair/vehicle/forceMove(var/atom/NewLoc)
 	..()
@@ -122,6 +125,7 @@
 	handle_rotation()
 
 /obj/structure/stool/bed/chair/vehicle/proc/Process_Spacemove(var/check_drift = 0, mob/user)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/stool/bed/chair/vehicle/proc/Process_Spacemove() called tick#: [world.time]")
 	if(can_spacemove && buckled_mob)
 		return 1
 	//First check to see if we can do things
@@ -221,6 +225,7 @@
 			buckled_mob.forceMove(loc)
 
 /obj/structure/stool/bed/chair/vehicle/proc/can_buckle(mob/M, mob/user)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/stool/bed/chair/vehicle/proc/can_buckle() called tick#: [world.time]")
 	if(M != user || !ishuman(user) || !Adjacent(user) || user.restrained() || user.lying || user.stat || user.buckled || destroyed)
 		return 0
 	return 1
@@ -260,12 +265,12 @@
 
 	if(buckled_mob)
 		if(buckled_mob.loc != loc)
-			buckled_mob.buckled = null //Temporary, so Move() succeeds.
-			buckled_mob.buckled = src //Restoring
+			buckled_mob.forceMove(loc)
 
 	update_mob()
 
 /obj/structure/stool/bed/chair/vehicle/proc/update_mob()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/stool/bed/chair/vehicle/proc/update_mob() called tick#: [world.time]")
 	if(buckled_mob)
 		buckled_mob.dir = dir
 		switch(dir)
@@ -324,6 +329,7 @@
 		HealthCheck()
 
 /obj/structure/stool/bed/chair/vehicle/proc/HealthCheck()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/stool/bed/chair/vehicle/proc/HealthCheck() called tick#: [world.time]")
 	if(health > max_health) health = max_health
 	if(health <= 0 && !destroyed)
 		die()
@@ -339,6 +345,7 @@
 	HealthCheck()
 
 /obj/structure/stool/bed/chair/vehicle/proc/die() //called when health <= 0
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/structure/stool/bed/chair/vehicle/proc/die() called tick#: [world.time]")
 	destroyed = 1
 	density = 0
 	if(buckled_mob)
@@ -348,6 +355,8 @@
 	icon_state = "pussywagon_destroyed"
 
 /obj/structure/stool/bed/chair/vehicle/Bump(var/atom/movable/obstacle)
+	if(obstacle == src || obstacle == buckled_mob)
+		return
 	if(istype(obstacle, /obj/structure))// || istype(obstacle, /mob/living)
 		if(!obstacle.anchored)
 			obstacle.Move(get_step(obstacle,src.dir))

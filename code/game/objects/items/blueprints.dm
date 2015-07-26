@@ -48,7 +48,7 @@
 	var/area/A = get_area()
 	var/text = {"<HTML><head><title>[src]</title></head><BODY>
 <h2>[station_name()] blueprints</h2>
-<small>Property of Nanotrasen. For heads of staff only. Store in high-secure storage.</small><hr>
+<small>property of Nanotrasen. For heads of staff only. Store in high-secure storage.</small><hr>
 "}
 	switch (get_area_type())
 		if (AREA_SPACE)
@@ -74,6 +74,7 @@ move an amendment</a> to the drawing.</p>
 
 
 /obj/item/blueprints/proc/get_area()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/blueprints/proc/get_area() called tick#: [world.time]")
 	var/turf/T = get_turf(usr)
 	var/area/A = get_area_master(T)
 	return A
@@ -100,6 +101,7 @@ move an amendment</a> to the drawing.</p>
 	return AREA_STATION
 
 /obj/item/blueprints/proc/create_area()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/blueprints/proc/create_area() called tick#: [world.time]")
 	//world << "DEBUG: create_area"
 	var/res = detect_room(get_turf(usr))
 	if(!istype(res,/list))
@@ -140,6 +142,7 @@ move an amendment</a> to the drawing.</p>
 	interact()
 
 /obj/item/blueprints/proc/edit_area()
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/blueprints/proc/edit_area() called tick#: [world.time]")
 	var/area/areachanged = get_area()
 	//world << "DEBUG: edit_area"
 	var/prevname = "[areachanged.name]"
@@ -156,7 +159,8 @@ move an amendment</a> to the drawing.</p>
 	interact()
 
 /obj/item/blueprints/proc/check_tile_is_border(var/turf/T2,var/dir)
-	if (istype(T2, /turf/space) || istype(T2, /turf/unsimulated/mineral) || istype(T2, /turf/unsimulated/floor/asteroid))
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/blueprints/proc/check_tile_is_border() called tick#: [world.time]")
+	if (istype(T2, /turf/space))
 		return BORDER_SPACE //omg hull breach we all going to die here
 	if (istype(T2, /turf/simulated/shuttle))
 		return BORDER_SPACE
@@ -185,6 +189,7 @@ move an amendment</a> to the drawing.</p>
 	return BORDER_NONE
 
 /obj/item/blueprints/proc/detect_room(var/turf/first)
+	//writepanic("[__FILE__].[__LINE__] ([src.type])([usr ? usr.ckey : ""])  \\/obj/item/blueprints/proc/detect_room() called tick#: [world.time]")
 	var/list/turf/found = new
 	var/list/turf/pending = list(first)
 	while(pending.len)
