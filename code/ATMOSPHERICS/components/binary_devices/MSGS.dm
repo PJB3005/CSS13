@@ -29,7 +29,9 @@
 
 	html_machines += src
 
-	interface = new(src, sanitize(name), 500, 520)
+	var/const/head = {"<meta http-equiv="X-UA-Compatible" content="IE=edge" />"}	//Fucking IE derping HTML.
+
+	interface = new(src, sanitize(name), 500, 520, head)
 
 	init_ui()
 
@@ -69,7 +71,7 @@
 		<div class="item">
 			<div class="itemLabel">Output pressure (kPa): </div>
 			<div class="itemContent">
-				<form action="?src=\ref[interface]" method="get"><input type="hidden" name="src" value="\ref[src]"/>
+				<form action="?src=\ref[interface]" method="get"><input type="hidden" name="src" value="\ref[interface]"/>
 					<span id="pressureinput"><input type="textbox" name="set_pressure" value="0"/></span> <input type="submit" name="act" value="Set"/>
 				</form>
 			</div>
@@ -220,6 +222,7 @@
 	var/pressure = air.return_pressure()
 	var/i = Clamp(round(pressure / (max_pressure / 5)), 0, 5)
 	if(i != last_pressure)
+		update = 1
 
 	if(!update)
 		return

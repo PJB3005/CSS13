@@ -181,7 +181,7 @@ mineral/cave
 	ore = null
 	UpdateTurf(var/turf/T)
 		if(!istype(T,/turf/unsimulated/floor/asteroid/cave))
-				T.ChangeTurf(/turf/unsimulated/floor/asteroid/cave)
+			T.ChangeTurf(/turf/unsimulated/floor/asteroid/cave)
 		else
 			..()
 
